@@ -1,4 +1,4 @@
-package measurement.color.com.xj_919.and.fragment.first;
+package measurement.color.com.xj_919.and.fragment.usb;
 
 /**
  * Created by wpc on 2016/9/14.

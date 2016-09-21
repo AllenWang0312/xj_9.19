@@ -1,6 +1,9 @@
-package measurement.color.com.xj_919.and.fragment.first;
+package measurement.color.com.xj_919.and.fragment.usb;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.hardware.usb.UsbConstants;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
@@ -9,13 +12,15 @@ import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
 import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+
 import measurement.color.com.xj_919.and.Utils.clsPublic;
 import measurement.color.com.xj_919.and.Utils.toast;
 
-import static measurement.color.com.xj_919.and.fragment.first.USBDatas.*;
+import static measurement.color.com.xj_919.and.fragment.usb.USBDatas.*;
 
 /**
  * Created by wpc on 2016/9/19.
@@ -23,14 +28,17 @@ import static measurement.color.com.xj_919.and.fragment.first.USBDatas.*;
 public class USBManager {
 
     private static USBManager instance;
-
     private final String tag = "USBManager";
+
+
     private final int i = Toast.LENGTH_SHORT;
     //-1设备不支持usbhost，0usbmanager可用1derive可用2interface可用3endpoint可用
     private static int state = -1;
 
+
     static Context mContext;
     static private UsbManager mUsbManager;
+    private usbBroadcastReceiver myUSBReceiver;
     private UsbDevice mUsbDevice;
     private UsbInterface mInterface;
     private UsbDeviceConnection mUsbDeviceConnection;
@@ -50,7 +58,7 @@ public class USBManager {
             instance = new USBManager();
         }
         mContext = context;
-        mUsbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
+        mUsbManager = (UsbManager) mContext.getSystemService(Context.USB_SERVICE);
         if (mUsbManager == null) {
             toast.makeText(mContext, "usb不可用");
         } else {
@@ -217,5 +225,39 @@ public class USBManager {
                 j++;
             }
         }
+    }
+
+    void registerReceiver() {
+        myUSBReceiver = new usbBroadcastReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.setPriority(800);
+        intentFilter.addAction("android.hardware.usb.action.USB_DEVICE_ATTACHED");
+        intentFilter.addAction("android.hardware.usb.action.USB_DEVICE_DETACHED");
+        mContext.registerReceiver(myUSBReceiver, intentFilter);
+    }
+
+    void unregisterReceiver() {
+        mContext.unregisterReceiver(myUSBReceiver);
+    }
+
+    class usbBroadcastReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            //作为host设备检测从设备是否连接
+            if (intent.getAction().equals("android.hardware.usb.action.USB_DEVICE_ATTACHED")) {
+                USBworkspace.setButtonEnable(true);
+            } else {
+                USBworkspace.setButtonEnable(false);
+            }
+
+//作为从设备连接和断开的判断   android.hardware.usb.action.USB_STATE
+//        if (intent.getExtras().getBoolean("connected")) {
+//            USBConectLayout.changeUSBButtonState(true);
+//        } else {
+//            USBConectLayout.changeUSBButtonState(false);
+//        }
+        }
+
     }
 }

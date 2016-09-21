@@ -1,4 +1,4 @@
-package measurement.color.com.xj_919.and.fragment.first;
+package measurement.color.com.xj_919.and.fragment.bluetooth;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -14,10 +14,8 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import measurement.color.com.xj_919.R;
 
@@ -39,9 +37,11 @@ public class ChoseDeveiceDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+
         context = getActivity();
         manager = BlueToothManager.getInstance(context);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_chose_bluetooth, null);
         lv1 = (ListView) view.findViewById(R.id.lv1_dialog_bluetooth);
@@ -49,7 +49,7 @@ public class ChoseDeveiceDialog extends DialogFragment {
         bt = (Button) view.findViewById(R.id.bt_dialog_bluetooth);
         mProgressBar = (ProgressBar) view.findViewById(R.id.pb_dialog_bluetooth);
 
-        if (manager.getDeveicesBondedNames().size() != 0) {
+        if (manager.getDevices() != null) {
             lv1.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, manager.getDeveicesBondedNames()));
         }
 

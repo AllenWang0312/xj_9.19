@@ -21,7 +21,6 @@ public class BaseAppCompatActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
         app.removeActivity(this);
     }
 

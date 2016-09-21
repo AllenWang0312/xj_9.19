@@ -14,21 +14,10 @@ public class app extends Application {
 
     private static List<Activity> activities = new ArrayList<Activity>();
 
-
-
-
-
-
     @Override
     public void onCreate() {
         super.onCreate();
     }
-
-
-
-
-
-
 
     public static void addActivity(Activity activity) {
         activities.add(activity);

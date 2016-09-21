@@ -1,4 +1,4 @@
-package measurement.color.com.xj_919.and.fragment.first;
+package measurement.color.com.xj_919.and.fragment.bluetooth;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -21,29 +21,10 @@ import java.util.UUID;
  * Created by wpc on 2016/9/20.
  */
 public class BlueToothManager {
-
-    private static final String tag = "BlueToothManager";
-
-
-    private final int t = Toast.LENGTH_SHORT;
-
-    private int connectState = BluetoothDevice.BOND_NONE;
-    private static ArrayList<BluetoothDevice> deveicesBonded=new ArrayList<>();
-    private static ArrayList<String> deveicesBondedNames=new ArrayList<>();
-
-    private static ArrayList<BluetoothDevice> deveicesDescoved = new ArrayList<>();
-    private static ArrayList<String> deveicesDescovedNames = new ArrayList<>();
-
     private static BlueToothManager instance;
-
     private BlueToothManager() {
 
     }
-
-    private static Context mContext;
-    private static BluetoothAdapter mAdapter;
-    private BlueToothBroadcastReceiver blueToothBroadcastReceiver;
-    private String deveicename = "152163LJT0010";//需要连接的设备名
 
     public static BlueToothManager getInstance(Context context) {
         if (instance == null) {
@@ -58,6 +39,20 @@ public class BlueToothManager {
     }
 
 
+    private static final String tag = "BlueToothManager";
+    private final String deveicename = "152163LJT0010";//需要连接的设备名
+    private final int t = Toast.LENGTH_SHORT;
+    private BlueToothBroadcastReceiver blueToothBroadcastReceiver;
+
+    private static Context mContext;
+    private static BluetoothAdapter mAdapter;
+    private int connectState = BluetoothDevice.BOND_NONE;
+
+    static ArrayList<BluetoothDevice> deveicesBonded = new ArrayList<>();
+    static ArrayList<String> deveicesBondedNames = new ArrayList<>();
+    static ArrayList<BluetoothDevice> deveicesDescoved = new ArrayList<>();
+    static ArrayList<String> deveicesDescovedNames = new ArrayList<>();
+
     public boolean openBlueTooth() {
         if (!mAdapter.isEnabled()) {
             Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
@@ -70,32 +65,44 @@ public class BlueToothManager {
     }
 
     //已连接过的列表
-    public static ArrayList<String> getDevices() {
+    public static ArrayList<BluetoothDevice> getDevices() {
+        ArrayList<BluetoothDevice> boundedlist = new ArrayList<>();
         if (mAdapter != null) {
             Set<BluetoothDevice> Devices = mAdapter.getBondedDevices();
             if (Devices.size() != 0) {
                 Log.i(tag, Devices.size() + "");
-                deveicesBonded = new ArrayList<BluetoothDevice>();
-                deveicesBondedNames = new ArrayList<String>();
                 Iterator<BluetoothDevice> iterator = Devices.iterator();
                 while (iterator.hasNext()) {
                     BluetoothDevice device = iterator.next();
-                    deveicesBonded.add(device);
-                    deveicesBondedNames.add(device.getName());
+                    boundedlist.add(device);
                 }
             }
         } else {
             Log.i(tag, "madapter为空");
             return null;
         }
-        return deveicesBondedNames;
+        return boundedlist;
+    }
 
+    //搜索
+    public void findDevices() {
+        mAdapter.startDiscovery();
+    }
+
+    public void stopDiscover() {
+        mAdapter.cancelDiscovery();
+    }
+
+    public void connect(BluetoothDevice device) throws IOException {
+        // 固定的UUID
+//            UUID uuid = aboutPhone.getUUID(mContext);
+        String uuid = "00001101-0000-1000-8000-00805F9B34FB";
+        BluetoothSocket socket = device.createRfcommSocketToServiceRecord(UUID.fromString(uuid));
+        socket.connect();
     }
 
     //注册接受搜索结果的广播
     public boolean registerReceiver() {
-        deveicesDescoved = new ArrayList<>();
-        deveicesDescovedNames=new ArrayList<>();
         blueToothBroadcastReceiver = new BlueToothBroadcastReceiver();
 
         IntentFilter startFilter = new IntentFilter(
@@ -113,15 +120,50 @@ public class BlueToothManager {
         return true;
     }
 
-    //搜索
-    public void findDevices() {
-        mAdapter.startDiscovery();
-    }
-
     //记得unregister
     public boolean unregisterReceiver() {
         mContext.unregisterReceiver(blueToothBroadcastReceiver);
         return true;
+    }
+
+    public static ArrayList<BluetoothDevice> getDeveicesBonded() {
+        return deveicesBonded;
+    }
+
+    public int getConnectState() {
+        return connectState;
+    }
+
+    public void setConnectState(int connectState) {
+        this.connectState = connectState;
+    }
+
+    public static void setDeveicesBonded(ArrayList<BluetoothDevice> deveicesBonded) {
+        BlueToothManager.deveicesBonded = deveicesBonded;
+    }
+
+    public static ArrayList<String> getDeveicesBondedNames() {
+        return deveicesBondedNames;
+    }
+
+    public static void setDeveicesBondedNames(ArrayList<String> deveicesBondedNames) {
+        BlueToothManager.deveicesBondedNames = deveicesBondedNames;
+    }
+
+    public static ArrayList<BluetoothDevice> getDeveicesDescoved() {
+        return deveicesDescoved;
+    }
+
+    public static void setDeveicesDescoved(ArrayList<BluetoothDevice> deveicesDescoved) {
+        BlueToothManager.deveicesDescoved = deveicesDescoved;
+    }
+
+    public static ArrayList<String> getDeveicesDescovedNames() {
+        return deveicesDescovedNames;
+    }
+
+    public static void setDeveicesDescovedNames(ArrayList<String> deveicesDescovedNames) {
+        BlueToothManager.deveicesDescovedNames = deveicesDescovedNames;
     }
 
     class BlueToothBroadcastReceiver extends BroadcastReceiver {
@@ -130,8 +172,6 @@ public class BlueToothManager {
             String action = intent.getAction();
             switch (action) {
                 case BluetoothAdapter.ACTION_DISCOVERY_STARTED:
-                    deveicesDescoved = new ArrayList<>();
-                    deveicesDescovedNames = new ArrayList<>();
                     Log.i(tag, "receiver action started");
                     break;
                 case BluetoothDevice.ACTION_FOUND:
@@ -141,7 +181,7 @@ public class BlueToothManager {
                     deveicesDescovedNames.add(device.getName());
 //                    Log.i(tag, device.getName());
                     if (device.getName().equalsIgnoreCase(deveicename)) {
-                        mAdapter.cancelDiscovery();
+                        stopDiscover();
                         connectState = device.getBondState();
                         switch (connectState) {
                             // 未配对
@@ -201,49 +241,4 @@ public class BlueToothManager {
         }
 
     }
-
-    public void connect(BluetoothDevice device) throws IOException {
-        // 固定的UUID
-//            UUID uuid = aboutPhone.getUUID(mContext);
-        String uuid = "00001101-0000-1000-8000-00805F9B34FB";
-        BluetoothSocket socket = device.createRfcommSocketToServiceRecord(UUID.fromString(uuid));
-        socket.connect();
-    }
-
-    int getConnectState() {
-        return connectState;
-    }
-
-    public static ArrayList<BluetoothDevice> getDeveicesBonded() {
-        return deveicesBonded;
-    }
-
-    public static void setDeveicesBonded(ArrayList<BluetoothDevice> deveicesBonded) {
-        BlueToothManager.deveicesBonded = deveicesBonded;
-    }
-
-    public static ArrayList<String> getDeveicesBondedNames() {
-        return deveicesBondedNames;
-    }
-
-    public static void setDeveicesBondedNames(ArrayList<String> deveicesBondedNames) {
-        BlueToothManager.deveicesBondedNames = deveicesBondedNames;
-    }
-
-    public ArrayList<BluetoothDevice> getDeveicesDescoved() {
-        return deveicesDescoved;
-    }
-
-    public ArrayList<String> getDeveicesDescovedNames() {
-        return deveicesDescovedNames;
-    }
-
-    public void setDeveicesDescoved(ArrayList<BluetoothDevice> deveicesDescoved) {
-        this.deveicesDescoved = deveicesDescoved;
-    }
-
-    public void setDeveicesDescovedNames(ArrayList<String> deveicesDescovedNames) {
-        this.deveicesDescovedNames = deveicesDescovedNames;
-    }
-
 }
