@@ -1,4 +1,4 @@
-package measurement.color.com.xj_919.and.Manager;
+package measurement.color.com.xj_919.and.fragment.first;
 
 import android.content.Context;
 import android.hardware.usb.UsbConstants;
@@ -8,17 +8,14 @@ import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
 import android.util.Log;
-import android.widget.ListView;
 import android.widget.Toast;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-
 import measurement.color.com.xj_919.and.Utils.clsPublic;
 import measurement.color.com.xj_919.and.Utils.toast;
-import measurement.color.com.xj_919.and.data.USBDatas;
 
+import static measurement.color.com.xj_919.and.fragment.first.USBDatas.*;
 
 /**
  * Created by wpc on 2016/9/19.
@@ -32,8 +29,8 @@ public class USBManager {
     //-1设备不支持usbhost，0usbmanager可用1derive可用2interface可用3endpoint可用
     private static int state = -1;
 
-    Context mContext;
-    private UsbManager mUsbManager;
+    static Context mContext;
+    static private UsbManager mUsbManager;
     private UsbDevice mUsbDevice;
     private UsbInterface mInterface;
     private UsbDeviceConnection mUsbDeviceConnection;
@@ -44,26 +41,28 @@ public class USBManager {
 
     private UsbEndpoint epBulkOut, epControl, epIntEndpointOut, epIntEndpointIn, epBulkIn;
 
-    private byte[] Sendbytes;    //发送信息字节
+
     private byte[] Receiveytes;  //接收信息字节
 
-    private USBManager(Context context) {
+
+    public static USBManager getInstance(Context context) {
+        if (instance == null) {
+            instance = new USBManager();
+        }
         mContext = context;
         mUsbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
         if (mUsbManager == null) {
-            Log.i(tag, "usb不可用");
             toast.makeText(mContext, "usb不可用");
         } else {
             state = 0;
         }
-    }
-
-    public static USBManager getInstance(Context context) {
-        if (instance == null) {
-            instance = new USBManager(context);
-        }
         return instance;
     }
+
+    private USBManager() {
+
+    }
+
 
     public boolean findDevice(int Vendorid, int productid) {
         if (mUsbManager != null) {
@@ -95,6 +94,7 @@ public class USBManager {
                 UsbInterface mInterface = mUsbDevice.getInterface(i);
                 if (mInterface.getInterfaceClass() == interfaceClass && mInterface.getInterfaceSubclass() == interfaceSubclass && mInterface.getInterfaceProtocol() == interfaceProtocol) {
                     this.mInterface = mInterface;
+                    Log.i("findInterface", mInterface.toString());
                     state = 2;
                     return true;
                 }
@@ -107,7 +107,6 @@ public class USBManager {
 
 
     public boolean findPoint() {
-        Log.i("interface", mInterface.toString());
         if (mInterface != null) {
             for (int j = 0; j < mInterface.getEndpointCount(); j++) {
                 UsbEndpoint ep = mInterface.getEndpoint(j);
@@ -115,11 +114,11 @@ public class USBManager {
                     if (ep.getDirection() == UsbConstants.USB_DIR_OUT) {
                         Log.i(tag, "Find the BulkEndpointOut,index:" + j + ",使用断点号:" + ep.getEndpointNumber());
                         epBulkOut = ep;
-                        state = 3;
-                        return true;
+
                     } else {
                         epBulkIn = ep;
                         Log.i(tag, "Find the BulkEndpointIn,index:" + j + ",使用断点号:" + ep.getEndpointNumber());
+
                     }
                 }
                 if (ep.getType() == UsbConstants.USB_ENDPOINT_XFER_CONTROL) {
@@ -143,10 +142,17 @@ public class USBManager {
                 }
 
             }
-            if (epBulkOut == null && epBulkIn == null && epControl == null
-                    && epIntEndpointOut == null && epIntEndpointIn == null) {
-                throw new IllegalArgumentException("not all endpoints found");
+            if (epBulkOut != null && epBulkIn != null) {
+                state = 3;
+                return true;
             }
+//
+//            if (epBulkOut == null && epBulkIn == null && epControl == null
+//                    && epIntEndpointOut == null && epIntEndpointIn == null) {
+//                throw new IllegalArgumentException("not all endpoints found");
+//            }else {
+//
+//            }
         }
         return false;
     }
@@ -165,16 +171,16 @@ public class USBManager {
         if (mUsbDeviceConnection == null) {
             mUsbDeviceConnection = mUsbManager.openDevice(mUsbDevice);
         }
-        Sendbytes = USBDatas.buffer;
+
 //                // 1,发送准备命令
-        ret = mUsbDeviceConnection.bulkTransfer(epBulkOut, Sendbytes, Sendbytes.length, 5000);
+        ret = mUsbDeviceConnection.bulkTransfer(epBulkOut, buffer, buffer.length, 5000);
         Log.i(tag, "已经发送!");
         // 2,接收发送成功信息
         Receiveytes = new byte[60];
-        requestAbyteStream(USBDatas.buffer1result);
-        requestAbyteStream(USBDatas.buffer2result);
-        requestAbyteStream(USBDatas.buffer3result);
-        requestAbyteStream(USBDatas.buffer4result);
+        requestAbyteStream(buffer1result);
+        requestAbyteStream(buffer2result);
+        requestAbyteStream(buffer3result);
+        requestAbyteStream(buffer4result);
     }
 
     void requestAbyteStream(byte[] save) {

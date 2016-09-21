@@ -7,11 +7,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context=".and.ui.activity.MainActivity"
+    tools:context=".and.activity.MainActivity"
     tools:showIn="@layout/app_bar_main">
     <fragment
-
-        android:name="measurement.color.com.xj_919.and.ui.fragment.FirstFragment"
+        android:name="measurement.color.com.xj_919.and.fragment.first.FirstFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     </fragment>

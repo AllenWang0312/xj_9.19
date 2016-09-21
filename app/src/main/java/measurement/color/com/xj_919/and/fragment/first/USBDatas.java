@@ -1,4 +1,4 @@
-package measurement.color.com.xj_919.and.data;
+package measurement.color.com.xj_919.and.fragment.first;
 
 /**
  * Created by wpc on 2016/9/14.
