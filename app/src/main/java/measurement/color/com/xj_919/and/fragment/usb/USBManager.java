@@ -10,6 +10,7 @@ import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbEndpoint;
 import android.hardware.usb.UsbInterface;
 import android.hardware.usb.UsbManager;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -29,12 +30,18 @@ public class USBManager {
 
     private static USBManager instance;
     private final String tag = "USBManager";
-
-
     private final int i = Toast.LENGTH_SHORT;
-    //-1设备不支持usbhost，0usbmanager可用1derive可用2interface可用3endpoint可用
+    //-1设备不支持usbhost，
+    // 0usbmanager可用
+    // 1derive可用
+    // 2interface可用
+    // 3endpoint可用
     private static int state = -1;
-
+    //-1 啥都没干
+    // 0 拍了照了
+    // 1 正在取数据
+    // 2 数据取完了
+    private static int datastate = -1;
 
     static Context mContext;
     static private UsbManager mUsbManager;
@@ -51,6 +58,10 @@ public class USBManager {
 
 
     private byte[] Receiveytes;  //接收信息字节
+
+     public static enum requestType {
+        TakePhoto, GetData;
+    }
 
 
     public static USBManager getInstance(Context context) {
@@ -170,42 +181,84 @@ public class USBManager {
         return state;
     }
 
-    public void setState(int i) {
-        this.state = i;
+
+
+    public int getDatastate() {
+        return datastate;
     }
 
-    public void sendRequest() {
-//        findIntfAndEpt();
+
+
+    public void sendTekePhothRequest(byte position) {
         if (mUsbDeviceConnection == null) {
             mUsbDeviceConnection = mUsbManager.openDevice(mUsbDevice);
         }
+        byte[] arr = getTakePhotoOrder(getPosition(position));
+        ret = mUsbDeviceConnection.bulkTransfer(epBulkOut, arr, 55, 5000);
 
-//                // 1,发送准备命令
-        ret = mUsbDeviceConnection.bulkTransfer(epBulkOut, buffer, buffer.length, 5000);
         Log.i(tag, "已经发送!");
-        // 2,接收发送成功信息
-        Receiveytes = new byte[60];
-        requestAbyteStream(buffer1result);
-        requestAbyteStream(buffer2result);
-        requestAbyteStream(buffer3result);
-        requestAbyteStream(buffer4result);
+
+        Receiveytes = new byte[220];
+        ret = mUsbDeviceConnection.bulkTransfer(epBulkIn, Receiveytes, Receiveytes.length, 10000);
+
+        Log.i(tag, "接收返回值:" + String.valueOf(ret));
+        Log.i(tag, "返回值为" + clsPublic.bytesToHexString(Receiveytes));
     }
 
-    void requestAbyteStream(byte[] save) {
-
-        ret = mUsbDeviceConnection.bulkTransfer(epBulkIn, Receiveytes, Receiveytes.length, 10000);
-        Log.i(tag, "接收返回值:" + String.valueOf(ret));
-        if (ret != 60) {
-            Toast.makeText(mContext, "接收返回值" + String.valueOf(ret), i).show();
-            return;
-        } else {
-            //查看返回值
-            Toast.makeText(mContext, clsPublic.bytesToHexString(Receiveytes), i).show();
-            Log.i(tag, clsPublic.bytesToHexString(Receiveytes));
-            saveData(Receiveytes, save);
-            Log.i(tag, clsPublic.bytesToHexString(save));
+    public void sendGetDatarequest(short index) {
+        synchronized (mUsbDeviceConnection){
+            if (mUsbDeviceConnection == null) {
+                mUsbDeviceConnection = mUsbManager.openDevice(mUsbDevice);
+            }
+            byte[] arr = getDataOrder(index);
+            ret = mUsbDeviceConnection.bulkTransfer(epBulkOut, arr, 55, 5000);
+            Log.i(tag, "已经发送!"+index);
+            Receiveytes = new byte[220];
+            ret = mUsbDeviceConnection.bulkTransfer(epBulkIn, Receiveytes, Receiveytes.length, 10000);
+            Log.i(tag, "接收"+index+"返回值:" + String.valueOf(ret));
+            Log.i(tag, "返回值为" + clsPublic.bytesToHexString(Receiveytes));
         }
     }
+
+    public void sendRequest(requestType type, @Nullable Byte position, @Nullable Short index) {
+
+        switch (type) {
+            case TakePhoto:
+                sendTekePhothRequest(position);
+                datastate=0;
+                break;
+            case GetData:
+                sendGetDatarequest(index);
+                break;
+        }
+    }
+
+//        findIntfAndEpt();
+//                // 1,发送准备命令
+//        ret = mUsbDeviceConnection.bulkTransfer(epBulkOut, buffer, buffer.length, 5000);
+        // 2,接收发送成功信息
+//        Receiveytes = new byte[];
+//        requestAbyteStream(buffer1result);
+//        requestAbyteStream(buffer2result);
+//        requestAbyteStream(buffer3result);
+//        requestAbyteStream(buffer4result);
+
+
+//    void requestAbyteStream(byte[] save) {
+//
+//        ret = mUsbDeviceConnection.bulkTransfer(epBulkIn, Receiveytes, Receiveytes.length, 10000);
+//        Log.i(tag, "接收返回值:" + String.valueOf(ret));
+//        if (ret != 60) {
+//            Toast.makeText(mContext, "接收返回值" + String.valueOf(ret), i).show();
+//            return;
+//        } else {
+//            //查看返回值
+//            Toast.makeText(mContext, clsPublic.bytesToHexString(Receiveytes), i).show();
+//            Log.i(tag, clsPublic.bytesToHexString(Receiveytes));
+//            saveData(Receiveytes, save);
+//            Log.i(tag, clsPublic.bytesToHexString(save));
+//        }
+//    }
 
     //用UsbDeviceConnection 与 UsbInterface 进行端点设置和通讯
     private void getEndpoint(UsbDeviceConnection connection, UsbInterface intf) {
@@ -231,6 +284,7 @@ public class USBManager {
         myUSBReceiver = new usbBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.setPriority(800);
+        intentFilter.addAction("android.hardware.usb.action.USB_STATE");
         intentFilter.addAction("android.hardware.usb.action.USB_DEVICE_ATTACHED");
         intentFilter.addAction("android.hardware.usb.action.USB_DEVICE_DETACHED");
         mContext.registerReceiver(myUSBReceiver, intentFilter);

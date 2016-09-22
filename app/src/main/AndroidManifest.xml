@@ -48,7 +48,7 @@
         <!--<intent-filter android:priority="800">-->
         <!--<action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"/>-->
         <!--<action android:name="android.hardware.usb.action.USB_DEVICE_DETACHED"/>-->
-        <!--&lt;!&ndash;<action android:name="android.hardware.usb.action.USB_STATE"></action>&ndash;&gt;-->
+        <!--<action android:name="android.hardware.usb.action.USB_STATE"></action>-->
         <!--</intent-filter>-->
         <!--</receiver>-->
 
