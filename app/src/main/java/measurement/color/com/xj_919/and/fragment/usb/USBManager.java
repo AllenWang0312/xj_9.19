@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -59,7 +60,7 @@ public class USBManager {
 
     private byte[] Receiveytes;  //接收信息字节
 
-     public static enum requestType {
+    public static enum requestType {
         TakePhoto, GetData;
     }
 
@@ -182,11 +183,9 @@ public class USBManager {
     }
 
 
-
     public int getDatastate() {
         return datastate;
     }
-
 
 
     public void sendTekePhothRequest(byte position) {
@@ -206,17 +205,21 @@ public class USBManager {
     }
 
     public void sendGetDatarequest(short index) {
-        synchronized (mUsbDeviceConnection){
+        synchronized (mUsbDeviceConnection) {
             if (mUsbDeviceConnection == null) {
                 mUsbDeviceConnection = mUsbManager.openDevice(mUsbDevice);
             }
             byte[] arr = getDataOrder(index);
             ret = mUsbDeviceConnection.bulkTransfer(epBulkOut, arr, 55, 5000);
-            Log.i(tag, "已经发送!"+index);
+            Log.i(tag, "已经发送!" + index);
+
             Receiveytes = new byte[220];
             ret = mUsbDeviceConnection.bulkTransfer(epBulkIn, Receiveytes, Receiveytes.length, 10000);
-            Log.i(tag, "接收"+index+"返回值:" + String.valueOf(ret));
+            Log.i(tag, "接收" + index + "返回值:" + String.valueOf(ret));
             Log.i(tag, "返回值为" + clsPublic.bytesToHexString(Receiveytes));
+            byte[] data = new byte[210];
+            System.arraycopy(Receiveytes, 9, data, 0, 210);
+            System.arraycopy(data, 0, part1, index * 210, 210);
         }
     }
 
@@ -225,7 +228,7 @@ public class USBManager {
         switch (type) {
             case TakePhoto:
                 sendTekePhothRequest(position);
-                datastate=0;
+                datastate = 0;
                 break;
             case GetData:
                 sendGetDatarequest(index);
@@ -236,7 +239,7 @@ public class USBManager {
 //        findIntfAndEpt();
 //                // 1,发送准备命令
 //        ret = mUsbDeviceConnection.bulkTransfer(epBulkOut, buffer, buffer.length, 5000);
-        // 2,接收发送成功信息
+    // 2,接收发送成功信息
 //        Receiveytes = new byte[];
 //        requestAbyteStream(buffer1result);
 //        requestAbyteStream(buffer2result);

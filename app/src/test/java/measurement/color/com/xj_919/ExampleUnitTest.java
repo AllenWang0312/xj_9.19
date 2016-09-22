@@ -1,5 +1,7 @@
 package measurement.color.com.xj_919;
 
+import android.graphics.Bitmap;
+
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -9,13 +11,9 @@ import static org.junit.Assert.*;
  */
 public class ExampleUnitTest {
 
-
-    int x=640;
-
     @Test
     public void addition_isCorrect() throws Exception {
         assertEquals(4, 2 + 2);
     }
-
 
 }

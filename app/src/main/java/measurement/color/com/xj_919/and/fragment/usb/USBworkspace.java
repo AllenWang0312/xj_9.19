@@ -2,6 +2,8 @@ package measurement.color.com.xj_919.and.fragment.usb;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -9,10 +11,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import measurement.color.com.xj_919.R;
+import measurement.color.com.xj_919.and.Utils.clsPublic;
 
+import static measurement.color.com.xj_919.and.fragment.usb.USBDatas.gray;
+import static measurement.color.com.xj_919.and.fragment.usb.USBDatas.part1;
 import static measurement.color.com.xj_919.and.fragment.usb.USBManager.requestType;
 
 /**
@@ -24,6 +30,7 @@ public class USBworkspace extends Fragment {
     private Context context;
     private USBManager mUSBManager;
     private static Button bt;
+    private static ImageView mImageView;
 
     @Nullable
     @Override
@@ -66,8 +73,30 @@ public class USBworkspace extends Fragment {
                                 bt.setText("获取第一组数据");
                                 break;
                             case 0:
-                                getDataThread myThread=new getDataThread();
-                                myThread.run();
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        Log.i("times", USBDatas.times + "");
+                                        for (short i = (short) 0; i < USBDatas.times; i++) {
+                                            Log.i("-->>", i + "");
+                                            mUSBManager.sendRequest(requestType.GetData, null, i);
+                                        }
+                                        for (int i = 0; i < part1.length; i += 2) {
+//                                            byte a = (byte) (part1[i] >> 2);
+//                                            byte b = (byte)(part1[i + 1] << 6);
+//                                            gray[1/2]=(byte) (a+b);
+                                            gray[1 / 2] = (byte) ((part1[i] >> 2) + (part1[i + 1] << 6));
+                                        }
+                                        Log.i("part1data", clsPublic.bytesToHexString(USBDatas.part1));
+                                        Log.i("gray", clsPublic.bytesToHexString(gray));
+                                        Log.i("getDataThread", "finish");
+
+                                        BitmapFactory.Options options = new BitmapFactory.Options();
+                                        options.inPreferredConfig = Bitmap.Config.ALPHA_8;
+                                        Bitmap bitmap = BitmapFactory.decodeByteArray(gray, 0, gray.length, options);
+                                        mImageView.setImageBitmap(bitmap);
+                                    }
+                                });
                                 break;
                             case 1:
 
@@ -104,17 +133,6 @@ public class USBworkspace extends Fragment {
             bt.setText("请确保usb连接");
         }
 
-    }
-
-    class getDataThread extends Thread {
-        @Override
-        public void run() {
-            super.run();
-            for (short i = 0x0000; i < USBDatas.times; i++) {
-                mUSBManager.sendRequest(requestType.GetData, null, i);
-            }
-            Log.i("getDataThread","finish");
-        }
     }
 
 }

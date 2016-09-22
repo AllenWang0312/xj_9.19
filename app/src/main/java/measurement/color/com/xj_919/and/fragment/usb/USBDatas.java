@@ -24,15 +24,20 @@ public class USBDatas {
     public static short length = 640;
     public static short height = 480;
     public static byte content = 8;
+
+    public static byte[] part1 = new byte[length * (height / content) * 2];
+    public static byte[] gray = new byte[length * (height / content)];
+
     public static byte partH = (byte) (height / content);
 
-    public static short times = (short) (length * (height / content) * 100);
+    public static short times = (short) (length * (height / content) / 100);
 
 
     /**
      * 根据 下面 位置信息 返回拍照的 命令byte数组
+     *
      * @param arr 位置信息
-     * @return    对应命令byte数组
+     * @return 对应命令byte数组
      */
 
     public static byte[] getTakePhotoOrder(byte[] arr) {
@@ -50,9 +55,10 @@ public class USBDatas {
 
     /**
      * 根据 position计算 图片起始位置
-     * @param position  第几张图片
+     *
+     * @param position 第几张图片
      * @return 8位byte  strXL strXH strYL strYH
-     *                  endXL endXH endYL endYH
+     * endXL endXH endYL endYH
      */
 
     public static byte[] getPosition(byte position) {
@@ -75,10 +81,12 @@ public class USBDatas {
         Log.i("getPosition", clsPublic.bytesToHexString(arr));
         return arr;
     }
+
     /**
      * 根据 获取  第几个   data返回对应命令byte数组
+     *
      * @param index 第几个data
-     * @return    对应命令byte数组
+     * @return 对应命令byte数组
      */
 
     public static byte[] getDataOrder(short index) {
