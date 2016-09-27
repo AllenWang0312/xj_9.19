@@ -2,6 +2,7 @@ package measurement.color.com.xj_919.and.fragment.bluetooth;
 
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.app.ProgressDialog;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
+
 import measurement.color.com.xj_919.R;
 
 /**
@@ -24,23 +26,30 @@ import measurement.color.com.xj_919.R;
  */
 public class BlueToothworkspace extends Fragment {
 
-    private Context mContext ;
-    private FragmentManager fm ;
+    private Context mContext;
+    private FragmentManager fm;
     private Button bt;
     private BlueToothManager mBlueToothManager;
     private ChoseDeveiceDialog dialog;
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        ProgressDialog dl = ProgressDialog.show(mContext, "数据正在加载", "请稍后", true, true);
+        dl.show();
+
+    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.bluetooth_fragment, container,false);
+        View view = inflater.inflate(R.layout.bluetooth_fragment, container, false);
 
         mContext = getActivity();
         fm = getFragmentManager();
-        mBlueToothManager=BlueToothManager.getInstance(mContext);
+        mBlueToothManager = BlueToothManager.getInstance(mContext);
         dialog = new ChoseDeveiceDialog();
-
 
         bt = (Button) view.findViewById(R.id.bt_bluetooth);
         bt.setOnClickListener(new View.OnClickListener() {

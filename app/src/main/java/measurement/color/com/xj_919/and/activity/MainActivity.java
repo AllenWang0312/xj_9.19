@@ -20,6 +20,7 @@ public class MainActivity extends BaseAppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private int tab = 1;
+
     DrawerLayout drawer;
     Toolbar toolbar;
     FloatingActionButton fab;
