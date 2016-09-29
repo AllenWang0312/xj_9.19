@@ -25,6 +25,27 @@ public class MyDBHelper extends SQLiteOpenHelper {
             + "R8Size integer," + "G8Size integer," + "B8Size integer,"  + "R8Mean real," + "G8Mean real," + "B8Mean real,"  + "R8Wc real," + "G8Wc real," + "B8Wc real"
             + "R9Size integer," + "G9Size integer," + "B9Size integer,"  + "R9Mean real," + "G9Mean real," + "B9Mean real,"  + "R9Wc real," + "G9Wc real," + "B9Wc real";
 
+    public static final String CREATE_RGB="create table rgb("
+            + "id integer primary key autoincrement,"
+            + "time text,"
+            +"R1T integer," +"G1T integer," +"B1T integer,"
+            +"R2T integer," +"G2T integer," +"B2T integer,"
+            +"R3T integer," +"G3T integer," +"B3T integer,"
+            +"R4T integer," +"G4T integer," +"B4T integer,"
+            +"R5T integer," +"G5T integer," +"B5T integer,"
+            +"R6T integer," +"G6T integer," +"B6T integer,"
+            +"R7T integer," +"G7T integer," +"B7T integer,"
+            +"R8T integer," +"G8T integer," +"B8T integer,"
+            +"R9T integer," +"G9T integer," +"B9T integer)";
+//
+//    public static final String CREATE_RGB_9
+//            ="create table rgb("
+//            + "id integer primary key autoincrement,"
+//            + "time text,"
+//            +"R1T integer," +"G1T integer," +"B1T integer,"
+//            +"R2T integer," +"G2T integer," +"B2T integer,"
+//            +"R3T integer," +"G3T integer," +"B3T integer)";
+
     private Context context;
 
     public MyDBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
@@ -34,7 +55,7 @@ public class MyDBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(CREATE_RGB_TABLE);
+        db.execSQL(CREATE_RGB);
         Log.i("MyDBhelper ", "onCreate");
     }
 

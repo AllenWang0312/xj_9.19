@@ -7,7 +7,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +25,13 @@ import measurement.color.com.xj_919.and.activity.TableActivity;
 /**
  * Created by wpc on 2016/9/21.
  */
-public class USBworkspace extends Fragment {
+public class USBworkspace extends Fragment implements View.OnClickListener {
+
+
+    private static final int BUTTON_STATE_UNENABLE = -1;
+    private static final int BUTTON_STATE_CONNECT = 0;
+    private static final int BUTTON_STATE_TAKEPHOTO = 2;
+    private static final int BUTTON_STATE_LOAD = 3;
 
 
     private Activity context;
@@ -30,25 +39,52 @@ public class USBworkspace extends Fragment {
     private static Button bt, bt_ls;
     private ImageView mImageView;
 
+    private Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            switch (msg.what) {
+                case BUTTON_STATE_UNENABLE:
+                    setButton("请确保usb连接正常", false);
+                    break;
+                case BUTTON_STATE_CONNECT:
+                    setButton("连接设备", true);
+                    break;
+                case BUTTON_STATE_TAKEPHOTO:
+                    setButton("拍照", true);
+                    break;
+                case BUTTON_STATE_LOAD:
+                    setButton("正在获取数据", false);
+                    break;
+            }
+        }
+    };
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.usb_fragment, container, false);
-
         context = getActivity();
         mUSBManager = USBManager.getInstance(context);
-        mUSBManager.registerReceiver();
 
         bt = (Button) view.findViewById(R.id.bt_usb);
         bt_ls = (Button) view.findViewById(R.id.bt_log);
-
         mImageView = (ImageView) view.findViewById(R.id.iv_usb_fragment);
 
-        bt.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        bt.setOnClickListener(this);
+        bt_ls.setOnClickListener(this);
+        return view;
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.bt_usb:
+                Log.i("state", mUSBManager.getState() + "");
                 switch (mUSBManager.getState()) {
+                    case -1:
+
+                        break;
                     case 0:
                         boolean findDevice = mUSBManager.findDevice(1155, 22336);
                         if (!findDevice) {
@@ -65,42 +101,51 @@ public class USBworkspace extends Fragment {
                             Toast.makeText(context, "请确认连接", Toast.LENGTH_SHORT).show();
                             break;
                         }
-                        bt.setText("拍照");
+                        handler.sendEmptyMessage(BUTTON_STATE_TAKEPHOTO);
                         break;
                     case 3:
-                        for (int i = 0; i < 100; i++) {
+                        for (int i = 0; i < 30; i++) {
                             new MyTask().execute();
                         }
                         break;
                 }
-            }
-        });
-        bt_ls.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                break;
+            case R.id.bt_log:
                 startActivity(new Intent(context, TableActivity.class));
-            }
-        });
+                break;
 
-        if (mUSBManager.getState() == -1) {
-            Toast.makeText(context, "你的手机不支持USB Host，无法驱动设备", Toast.LENGTH_SHORT).show();
-        } else {
-            bt.setEnabled(true);
         }
-        return view;
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        mUSBManager.registerReceiver();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        switch (mUSBManager.getState()) {
-            case -1:
-                setButton("请确保usb正常连接", false);
-                break;
-            case 0:
-                setButton("连接设备", true);
-                break;
+        if (mUSBManager.getState() == 3) {
+            handler.sendEmptyMessage(BUTTON_STATE_TAKEPHOTO);
+        } else if (mUSBManager.getState() == 0) {
+            handler.sendEmptyMessage(BUTTON_STATE_CONNECT);
+        } else if (mUSBManager.getState() == -1) {
+            Toast.makeText(context, "你的手机不支持USB Host，无法驱动设备", Toast.LENGTH_SHORT).show();
         }
+        Log.i("onResume", mUSBManager.getState() + "");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        mUSBManager.unregisterReceiver();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
     }
 
     public static void setButton(CharSequence str, boolean bool) {
@@ -108,14 +153,7 @@ public class USBworkspace extends Fragment {
         bt.setEnabled(bool);
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        mUSBManager.unregisterReceiver();
-    }
-
-
-    private class MyTask extends AsyncTask<String, Integer, String> {
+    private class MyTask extends AsyncTask<String, Integer, Integer> {
 
         ProgressDialog dialog;
         Bitmap bitmap;
@@ -137,7 +175,7 @@ public class USBworkspace extends Fragment {
 
         //doInBackground方法内部执行后台任务,不可在此方法内修改UI
         @Override
-        protected String doInBackground(String... params) {
+        protected Integer doInBackground(String... params) {
             mUSBManager.sendTakePhotoRequest((byte) 0x00);
             mUSBManager.LoadDate();
             bitmap = Bitmap.createBitmap(mUSBManager.arr, mUSBManager.length - 1, mUSBManager.height - 1, Bitmap.Config.ARGB_8888);
@@ -147,14 +185,15 @@ public class USBworkspace extends Fragment {
         //onProgressUpdate方法用于更新进度信息
         @Override
         protected void onProgressUpdate(Integer... progresses) {
+//            dialog.setProgress(progresses);
         }
 
         //onPostExecute方法用于在执行完后台任务后更新UI,显示结果
         @Override
-        protected void onPostExecute(String result) {
+        protected void onPostExecute(Integer result) {
 
             setButton("拍照", true);
-            dialog.dismiss();
+            dialog.cancel();
             mImageView.setImageBitmap(bitmap);
             mUSBManager.arr = new int[(mUSBManager.length - 1) * (mUSBManager.height - 1)];
         }

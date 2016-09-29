@@ -96,6 +96,7 @@ public class MainActivity extends BaseAppCompatActivity
             case R.id.nav_gallery:
                 if (tab != 2) {
                     getFragmentManager().beginTransaction().replace(R.id.fl_main, new BlueToothworkspace()).commit();
+                    tab=2;
                 }
                 break;
             case R.id.nav_slideshow:

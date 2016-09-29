@@ -38,14 +38,11 @@ public class USBManager {
     // 0usbmanager可用
     // 1derive可用
     // 2interface可用
-    // 3endpoint可用
-    private static int state = -1;
+    // 3endpoint可用/可以发送拍照请求
 
-    //-1 啥都没干
-    // 0 拍了照了
-    // 1 正在取数据
-    // 2 数据取完了
-    private static int datastate = -1;
+    //4 拍完照了
+    //5 数据取完了
+    private static int state = -1;
 
     static Activity mContext;
     static private UsbManager mUsbManager;
@@ -198,12 +195,6 @@ public class USBManager {
         return state;
     }
 
-
-    public int getDatastate() {
-        return datastate;
-    }
-
-
     public void sendTakePhotoRequest(byte position) {
         if (mUsbDeviceConnection == null) {
             mUsbDeviceConnection = mUsbManager.openDevice(mUsbDevice);
@@ -213,6 +204,7 @@ public class USBManager {
         Log.i(tag, "拍照请求已经发送!");
         Receiveytes = new byte[220];
         ret = mUsbDeviceConnection.bulkTransfer(epBulkIn, Receiveytes, 220, 10000);
+        state=4;
     }
 
     public void sendGetDataRequest(short index) {
@@ -385,6 +377,40 @@ public class USBManager {
     }
 
     public void LoadDate() {
+
+//        mContext.runOnUiThread(new Runnable() {
+//            @Override
+//            public void run() {
+        if (mUsbDeviceConnection == null) {
+            mUsbDeviceConnection = mUsbManager.openDevice(mUsbDevice);
+        }
+        for (short i = (short) 0; i < times; i++) {
+//                    Log.i("-->>", i + "of");
+            sendGetDataRequest(i);
+        }
+        state = 5;
+        Log.i("get data end", "begin trainslate");
+        for (int i = 0; i < part1.length; i += 2) {
+//                                            byte a = (byte) (part1[i] >> 2);
+//                                            byte b = (byte)(part1[i + 1] << 6);
+//                                            gray[1/2]=(byte) (a+b);
+            //0xCF 02  1100  1111  0000  0010
+
+            //1011 0011
+            GRAY[i / 2] = part1[i] + ((part1[i + 1] & 0x0ff) << 8);
+            gray[i / 2] = (((part1[i] & 0x0ff) >> 2) + ((part1[i + 1] & 0x0ff) << 6));
+//                    Log.i("gray", gray[1 / 2]+"");
+
+            //0xFF2C2C2C
+
+//                                            grayARGB[i/ 2] = (0xff000000 + (g << 16) +  (g << 8) + g);
+//                                            grayARGB[2 * i] = (byte) 0xff;
+//                                            grayARGB[2 * i + 1] = g;
+//                                            grayARGB[2 * i + 2] = g;
+//                                            grayARGB[2 * i + 3] = g;
+        }
+//i 行数(y)j列数(x)
+
         ArrayList<Integer> gray1R = new ArrayList<>();
         ArrayList<Integer> gray1G = new ArrayList<>();
         ArrayList<Integer> gray1B = new ArrayList<>();
@@ -420,38 +446,7 @@ public class USBManager {
         ArrayList<Integer> gray9R = new ArrayList<>();
         ArrayList<Integer> gray9G = new ArrayList<>();
         ArrayList<Integer> gray9B = new ArrayList<>();
-//        mContext.runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-        if (mUsbDeviceConnection == null) {
-            mUsbDeviceConnection = mUsbManager.openDevice(mUsbDevice);
-        }
-        for (short i = (short) 0; i < times; i++) {
-//                    Log.i("-->>", i + "of");
-            sendGetDataRequest(i);
-        }
-        datastate = 1;
-        Log.i("get data end", "begin trainslate");
-        for (int i = 0; i < part1.length; i += 2) {
-//                                            byte a = (byte) (part1[i] >> 2);
-//                                            byte b = (byte)(part1[i + 1] << 6);
-//                                            gray[1/2]=(byte) (a+b);
-            //0xCF 02  1100  1111  0000  0010
 
-            //1011 0011
-            GRAY[i / 2] = part1[i] + ((part1[i + 1] & 0x0ff) << 8);
-            gray[i / 2] = (((part1[i] & 0x0ff) >> 2) + ((part1[i + 1] & 0x0ff) << 6));
-//                    Log.i("gray", gray[1 / 2]+"");
-
-            //0xFF2C2C2C
-
-//                                            grayARGB[i/ 2] = (0xff000000 + (g << 16) +  (g << 8) + g);
-//                                            grayARGB[2 * i] = (byte) 0xff;
-//                                            grayARGB[2 * i + 1] = g;
-//                                            grayARGB[2 * i + 2] = g;
-//                                            grayARGB[2 * i + 3] = g;
-        }
-//i 行数(y)j列数(x)
         for (short i = 0; i < 479; i++) {
             for (short j = 0; j < 639; j++) {
                 int p = i * 639 + j;
@@ -676,121 +671,155 @@ public class USBManager {
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");//设置日期格式
         values.put("time", df.format(new Date()));
 
-        values.put("R1Size", gray1R.size());
-        values.put("G1Size", gray1G.size());
-        values.put("B1Size", gray1B.size());
+        values.put("R1T",getArrayTotal(gray1R));
+        values.put("G1T",getArrayTotal(gray1G));
+        values.put("B1T",getArrayTotal(gray1B));
 
-        values.put("R2Size", gray2R.size());
-        values.put("G2Size", gray2G.size());
-        values.put("B2Size", gray2B.size());
+        values.put("R2T",getArrayTotal(gray2R));
+        values.put("G2T",getArrayTotal(gray2G));
+        values.put("B2T",getArrayTotal(gray2B));
 
-        values.put("R3Size", gray3R.size());
-        values.put("G3Size", gray3G.size());
-        values.put("B3Size", gray3B.size());
+        values.put("R3T",getArrayTotal(gray3R));
+        values.put("G3T",getArrayTotal(gray3G));
+        values.put("B3T",getArrayTotal(gray3B));
 
-        values.put("R4Size", gray4R.size());
-        values.put("G4Size", gray4G.size());
-        values.put("B4Size", gray4B.size());
+        values.put("R4T",getArrayTotal(gray4R));
+        values.put("G4T",getArrayTotal(gray4G));
+        values.put("B4T",getArrayTotal(gray4B));
 
-        values.put("R5Size", gray5R.size());
-        values.put("G5Size", gray5G.size());
-        values.put("B5Size", gray5B.size());
+        values.put("R5T",getArrayTotal(gray5R));
+        values.put("G5T",getArrayTotal(gray5G));
+        values.put("B5T",getArrayTotal(gray5B));
 
-        values.put("R6Size", gray6R.size());
-        values.put("G6Size", gray6G.size());
-        values.put("B6Size", gray6B.size());
+        values.put("R6T",getArrayTotal(gray6R));
+        values.put("G6T",getArrayTotal(gray6G));
+        values.put("B6T",getArrayTotal(gray6B));
 
-        values.put("R7Size", gray7R.size());
-        values.put("G7Size", gray7G.size());
-        values.put("B7Size", gray7B.size());
+        values.put("R7T",getArrayTotal(gray7R));
+        values.put("G7T",getArrayTotal(gray7G));
+        values.put("B7T",getArrayTotal(gray7B));
 
-        values.put("R8Size", gray8R.size());
-        values.put("G8Size", gray8G.size());
-        values.put("B8Size", gray8B.size());
+        values.put("R8T",getArrayTotal(gray8R));
+        values.put("G8T",getArrayTotal(gray8G));
+        values.put("B8T",getArrayTotal(gray8B));
 
-        values.put("R9Size", gray9R.size());
-        values.put("G9Size", gray9G.size());
-        values.put("B9Size", gray9B.size());
+        values.put("R9T",getArrayTotal(gray9R));
+        values.put("G9T",getArrayTotal(gray9G));
+        values.put("B9T",getArrayTotal(gray9B));
 
-        values.put("R1Mean", getArrayMean(gray1R));
-        values.put("G1Mean", getArrayMean(gray1G));
-        values.put("B1Mean", getArrayMean(gray1B));
-
-        values.put("R2Mean", getArrayMean(gray2R));
-        values.put("G2Mean", getArrayMean(gray2G));
-        values.put("B2Mean", getArrayMean(gray2B));
-
-        values.put("R3Mean", getArrayMean(gray3R));
-        values.put("G3Mean", getArrayMean(gray3G));
-        values.put("B3Mean", getArrayMean(gray3B));
-
-        values.put("R4Mean", getArrayMean(gray4R));
-        values.put("G4Mean", getArrayMean(gray4G));
-        values.put("B4Mean", getArrayMean(gray4B));
-
-        values.put("R5Mean", getArrayMean(gray5R));
-        values.put("G5Mean", getArrayMean(gray5G));
-        values.put("B5Mean", getArrayMean(gray5B));
-
-        values.put("R6Mean", getArrayMean(gray6R));
-        values.put("G6Mean", getArrayMean(gray6G));
-        values.put("B6Mean", getArrayMean(gray6G));
-
-        values.put("R7Mean", getArrayMean(gray7R));
-        values.put("G7Mean", getArrayMean(gray7G));
-        values.put("B7Mean", getArrayMean(gray7B));
-
-        values.put("R8Mean", getArrayMean(gray8R));
-        values.put("G8Mean", getArrayMean(gray8G));
-        values.put("B8Mean", getArrayMean(gray8B));
-
-        values.put("R9Mean", getArrayMean(gray9R));
-        values.put("G9Mean", getArrayMean(gray9G));
-        values.put("B9Mean", getArrayMean(gray9B));
-
-        values.put("R1Mean", getArrayMean(gray1R));
-        values.put("G1Mean", getArrayMean(gray1G));
-        values.put("B1Mean", getArrayMean(gray1B));
-
-        values.put("R2Mean", getArrayMean(gray2R));
-        values.put("G2Mean", getArrayMean(gray2G));
-        values.put("B2Mean", getArrayMean(gray2B));
-
-        values.put("R3Mean", getArrayMean(gray3R));
-        values.put("G3Mean", getArrayMean(gray3G));
-        values.put("B3Mean", getArrayMean(gray3B));
-
-        values.put("R4Mean", getArrayMean(gray4R));
-        values.put("G4Mean", getArrayMean(gray4G));
-        values.put("B4Mean", getArrayMean(gray4B));
-
-        values.put("R5Mean", getArrayMean(gray5R));
-        values.put("G5Mean", getArrayMean(gray5G));
-        values.put("B5Mean", getArrayMean(gray5B));
-
-        values.put("R6Mean", getArrayMean(gray6R));
-        values.put("G6Mean", getArrayMean(gray6G));
-        values.put("B6Mean", getArrayMean(gray6G));
-
-        values.put("R7Mean", getArrayMean(gray7R));
-        values.put("G7Mean", getArrayMean(gray7G));
-        values.put("B7Mean", getArrayMean(gray7B));
-
-        values.put("R8Mean", getArrayMean(gray8R));
-        values.put("G8Mean", getArrayMean(gray8G));
-        values.put("B8Mean", getArrayMean(gray8B));
-
-        values.put("R9Mean", getArrayMean(gray9R));
-        values.put("G9Mean", getArrayMean(gray9G));
-        values.put("B9Mean", getArrayMean(gray9B));
-
-
-        db.insert("RGB", null, values);
+//        values.put("R1Size", gray1R.size());
+//        values.put("G1Size", gray1G.size());
+//        values.put("B1Size", gray1B.size());
+//
+//        values.put("R2Size", gray2R.size());
+//        values.put("G2Size", gray2G.size());
+//        values.put("B2Size", gray2B.size());
+//
+//        values.put("R3Size", gray3R.size());
+//        values.put("G3Size", gray3G.size());
+//        values.put("B3Size", gray3B.size());
+//
+//        values.put("R4Size", gray4R.size());
+//        values.put("G4Size", gray4G.size());
+//        values.put("B4Size", gray4B.size());
+//
+//        values.put("R5Size", gray5R.size());
+//        values.put("G5Size", gray5G.size());
+//        values.put("B5Size", gray5B.size());
+//
+//        values.put("R6Size", gray6R.size());
+//        values.put("G6Size", gray6G.size());
+//        values.put("B6Size", gray6B.size());
+//
+//        values.put("R7Size", gray7R.size());
+//        values.put("G7Size", gray7G.size());
+//        values.put("B7Size", gray7B.size());
+//
+//        values.put("R8Size", gray8R.size());
+//        values.put("G8Size", gray8G.size());
+//        values.put("B8Size", gray8B.size());
+//
+//        values.put("R9Size", gray9R.size());
+//        values.put("G9Size", gray9G.size());
+//        values.put("B9Size", gray9B.size());
+//
+//        values.put("R1Mean", getArrayMean(gray1R));
+//        values.put("G1Mean", getArrayMean(gray1G));
+//        values.put("B1Mean", getArrayMean(gray1B));
+//
+//        values.put("R2Mean", getArrayMean(gray2R));
+//        values.put("G2Mean", getArrayMean(gray2G));
+//        values.put("B2Mean", getArrayMean(gray2B));
+//
+//        values.put("R3Mean", getArrayMean(gray3R));
+//        values.put("G3Mean", getArrayMean(gray3G));
+//        values.put("B3Mean", getArrayMean(gray3B));
+//
+//        values.put("R4Mean", getArrayMean(gray4R));
+//        values.put("G4Mean", getArrayMean(gray4G));
+//        values.put("B4Mean", getArrayMean(gray4B));
+//
+//        values.put("R5Mean", getArrayMean(gray5R));
+//        values.put("G5Mean", getArrayMean(gray5G));
+//        values.put("B5Mean", getArrayMean(gray5B));
+//
+//        values.put("R6Mean", getArrayMean(gray6R));
+//        values.put("G6Mean", getArrayMean(gray6G));
+//        values.put("B6Mean", getArrayMean(gray6G));
+//
+//        values.put("R7Mean", getArrayMean(gray7R));
+//        values.put("G7Mean", getArrayMean(gray7G));
+//        values.put("B7Mean", getArrayMean(gray7B));
+//
+//        values.put("R8Mean", getArrayMean(gray8R));
+//        values.put("G8Mean", getArrayMean(gray8G));
+//        values.put("B8Mean", getArrayMean(gray8B));
+//
+//        values.put("R9Mean", getArrayMean(gray9R));
+//        values.put("G9Mean", getArrayMean(gray9G));
+//        values.put("B9Mean", getArrayMean(gray9B));
+//
+//        values.put("R1Wc", getArrayWc(gray1R));
+//        values.put("G1Wc", getArrayWc(gray1G));
+//        values.put("B1Wc", getArrayWc(gray1B));
+//
+//        values.put("R2Wc", getArrayWc(gray2R));
+//        values.put("G2Wc", getArrayWc(gray2G));
+//        values.put("B2Wc", getArrayWc(gray2B));
+//
+//        values.put("R3Wc", getArrayWc(gray3R));
+//        values.put("G3Wc", getArrayWc(gray3G));
+//        values.put("B3Wc", getArrayWc(gray3B));
+//
+//        values.put("R4Wc", getArrayWc(gray4R));
+//        values.put("G4Wc", getArrayWc(gray4G));
+//        values.put("B4Wc", getArrayWc(gray4B));
+//
+//        values.put("R5Wc", getArrayWc(gray5R));
+//        values.put("G5Wc", getArrayWc(gray5G));
+//        values.put("B5Wc", getArrayWc(gray5B));
+//
+//        values.put("R6Wc", getArrayWc(gray6R));
+//        values.put("G6Wc", getArrayWc(gray6G));
+//        values.put("B6Wc", getArrayWc(gray6G));
+//
+//        values.put("R7Wc", getArrayWc(gray7R));
+//        values.put("G7Wc", getArrayWc(gray7G));
+//        values.put("B7Wc", getArrayWc(gray7B));
+//
+//        values.put("R8Wc", getArrayWc(gray8R));
+//        values.put("G8Wc", getArrayWc(gray8G));
+//        values.put("B8Wc", getArrayWc(gray8B));
+//
+//        values.put("R9Wc", getArrayWc(gray9R));
+//        values.put("G9Wc", getArrayWc(gray9G));
+//        values.put("B9Wc", getArrayWc(gray9B));
+        db.insert("rgb", null, values);
 //                Log.i("chose_colors", chose_colors.size() + "");
         //将目标区域绘制为黑色,用于校准
 //                chose_colors.clear();
 
-        datastate = -1;
+        state = 3;
         Log.i("arr", Integer.toHexString(arr[1]));
 //                Log.i("gray length", gray.length + "");
 //                Log.i("gtsyARGB", grayARGB.toString() + "");
@@ -799,30 +828,35 @@ public class USBManager {
 
     }
 
-    float getArrayMean(ArrayList<Integer> arr) {
-        float total = 0;
+    int getArrayTotal(ArrayList<Integer> arr){
+        int total = 0;
         for (Integer i : arr) {
             total += i;
         }
-        return total / arr.size();
+        return total ;
     }
 
-    float getArryWc(ArrayList<Integer> arr) {
-        int max = 0, min = 1024;
-        for (Integer i : arr) {
-            if (i > max) {
-                max = i;
-            }
-            if (i < min) {
-                min = i;
-            }
-        }
-        return (max - min) / getArrayMean(arr);
-    }
+//    float getArrayMean(ArrayList<Integer> arr) {
+//
+//        return (float) getArrayTotal(arr) / arr.size();
+//    }
+//
+//    float getArrayWc(ArrayList<Integer> arr) {
+//        int max = 0, min = 1024;
+//        for (Integer i : arr) {
+//            if (i > max) {
+//                max = i;
+//            }
+//            if (i < min) {
+//                min = i;
+//            }
+//        }
+//        return (max - min) / getArrayMean(arr);
+//    }
 
-    //
-    short centerX = length / 2;
-    short centerY = height / 2;
+    //中心校验
+    short centerX = length / 2-5;
+    short centerY = height / 2+3;
 
     short between = 145;//135px(9mm)
     short r = 40;//45px(3mm)
@@ -833,7 +867,7 @@ public class USBManager {
      *
      * @param x 横坐标
      * @param y 纵坐标
-     * @return true false
+     * @return 第几个取样点
      */
     int inSample(short x, short y) {
 
@@ -865,65 +899,65 @@ public class USBManager {
         return 0;
     }
 
-    class SimpleData {
-        private String time;
-        private ArrayList<MathData> Datas;
-
-        public SimpleData(String time, ArrayList<MathData> datas) {
-            this.time = time;
-            Datas = datas;
-        }
-
-        public String getTime() {
-            return time;
-        }
-
-        public void setTime(String time) {
-            this.time = time;
-        }
-
-        public ArrayList<MathData> getDatas() {
-            return Datas;
-        }
-
-        public void setDatas(ArrayList<MathData> datas) {
-            Datas = datas;
-        }
-
-        class MathData {
-            int num;
-            float mean;
-            float wc;
-
-            public MathData(int num, float wc, float mean) {
-                this.num = num;
-                this.wc = wc;
-                this.mean = mean;
-            }
-
-            public int getNum() {
-                return num;
-            }
-
-            public void setNum(int num) {
-                this.num = num;
-            }
-
-            public float getWc() {
-                return wc;
-            }
-
-            public void setWc(float wc) {
-                this.wc = wc;
-            }
-
-            public float getMean() {
-                return mean;
-            }
-
-            public void setMean(float mean) {
-                this.mean = mean;
-            }
-        }
-    }
+//    class SimpleData {
+//        private String time;
+//        private ArrayList<MathData> Datas;
+//
+//        public SimpleData(String time, ArrayList<MathData> datas) {
+//            this.time = time;
+//            Datas = datas;
+//        }
+//
+//        public String getTime() {
+//            return time;
+//        }
+//
+//        public void setTime(String time) {
+//            this.time = time;
+//        }
+//
+//        public ArrayList<MathData> getDatas() {
+//            return Datas;
+//        }
+//
+//        public void setDatas(ArrayList<MathData> datas) {
+//            Datas = datas;
+//        }
+//
+//        class MathData {
+//            int num;
+//            float mean;
+//            float wc;
+//
+//            public MathData(int num, float wc, float mean) {
+//                this.num = num;
+//                this.wc = wc;
+//                this.mean = mean;
+//            }
+//
+//            public int getNum() {
+//                return num;
+//            }
+//
+//            public void setNum(int num) {
+//                this.num = num;
+//            }
+//
+//            public float getWc() {
+//                return wc;
+//            }
+//
+//            public void setWc(float wc) {
+//                this.wc = wc;
+//            }
+//
+//            public float getMean() {
+//                return mean;
+//            }
+//
+//            public void setMean(float mean) {
+//                this.mean = mean;
+//            }
+//        }
+//    }
 }
