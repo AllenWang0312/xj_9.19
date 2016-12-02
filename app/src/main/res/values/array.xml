@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="list_preference">
+        <item>Daylight</item>
+        <item>incandescent</item>
+        <item>A</item>
+        <item>C</item>
+
+        <item>D50</item>
+        <item>D55</item>
+        <item>D65</item>
+        <item>D75</item>
+    </string-array>
+
+    <string-array name="list2_preference">
+        <item>2°</item>
+        <item>10°</item>
+    </string-array>
+
+    <string-array name="list3_preference">
+        <item>线</item>
+        <item>点</item>
+        <item>线|点</item>
+    </string-array>
+    <string-array name="list4_preference">
+        <item>X</item>
+        <item>Y</item>
+        <item>X|Y</item>
+    </string-array>
+</resources>

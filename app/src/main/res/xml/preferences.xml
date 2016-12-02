@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="值设置">
+        <ListPreference
+            android:key="key_zhaoming"
+            android:defaultValue="list key default value"
+            android:title="照明"
+            android:summary="环境光照条件"
+            android:entries="@array/list_preference"
+            android:entryValues="@array/list_preference"
+            android:dialogTitle="光照" />
+        <ListPreference
+            android:key="key_guancha"
+            android:defaultValue="list key default value"
+            android:title="观察"
+            android:summary="观测角度"
+            android:entries="@array/list2_preference"
+            android:entryValues="@array/list2_preference"
+            android:dialogTitle="观察" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="图表">
+        <ListPreference
+            android:key="key_chart"
+            android:defaultValue="list key default value"
+            android:title="图标样式"
+            android:summary="选择默认的图标样式"
+            android:entries="@array/list3_preference"
+            android:entryValues="@array/list3_preference"
+            android:dialogTitle="图标样式" />
+        <ListPreference
+            android:key="key_chart_pre"
+            android:defaultValue="list key default value"
+            android:title="预览图滑动轴"
+            android:summary="设置预览图哪个方向可以滑动"
+            android:entries="@array/list4_preference"
+            android:entryValues="@array/list4_preference"
+            android:dialogTitle="预览图滑动轴" />
+        <CheckBoxPreference
+            android:key="key_pre_chart_color"
+            android:defaultValue="checkbox default value"
+            android:summary="是否打开"
+            android:title="预览框颜色"
+            />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="其他">
+        <!--<RingtonePreference-->
+            <!--android:key="rington"-->
+            <!--android:title="应用版本"-->
+            <!--&gt;-->
+        <!--</RingtonePreference>-->
+        <EditTextPreference
+            android:key="edittext_key"
+            android:defaultValue="edit default value"
+            android:summary="edit summary"
+            android:title="edit title" />
+        <Preference
+            android:key="share"
+            android:title="分享app"
+            android:summary="=￣ω￣="
+            >
+        </Preference>
+        <EditTextPreference
+            android:key="num_key"
+            android:defaultValue="哈哈哈哈"
+            android:summary="发送意见给我们吧"
+            android:title="反馈信息" />
+
+    </PreferenceCategory>
+</PreferenceScreen>

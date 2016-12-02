@@ -1,0 +1,42 @@
+{    
+     "area1" : [
+	  {"DetectionMode":"type1",
+	  "StandardColor":[120,70,70],	  
+	  "Range":"10",
+	  "PixNum":"100"
+	  }
+	  ],    
+     
+      "area3" :[
+	  {"DetectionMode":"type1",
+	  "StandardColor":[120,70,70],	  
+	  "Range":"10",
+	  "PixNum":"100"}
+	  ],  
+      "area4" :[
+	  {"DetectionMode":"type1",
+	  "StandardColor":[120,70,70],	  
+	  "Range":"10",
+	  "PixNum":"100"}
+	  ],  
+      
+	 "area6" : [
+	  {"DetectionMode":"type1",
+	  "StandardColor":[120,70,70],	  
+	  "Range":"10",
+	  "PixNum":"100"}
+	  ],     
+	 "area7" : [
+	  {"DetectionMode":"type1",
+	  "StandardColor":[120,70,70],	  
+	  "Range":"10",
+	  "PixNum":"100"}
+	  ],     
+	    
+	 "area9" : [
+	  {"DetectionMode":"type1",
+	  "StandardColor":[120,70,70],	  
+	  "Range":"10",
+	  "PixNum":"100"}
+	  ]
+ }  
