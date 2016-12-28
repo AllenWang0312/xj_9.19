@@ -1,12 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/fl_main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
     tools:context=".and.activity.MainActivity"
     tools:showIn="@layout/app_bar_main">
-</FrameLayout>
+
+    <measurement.color.com.xj_919.and.view.CustomViewPager
+        android:id="@+id/vp_main"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="?attr/containerBackground"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        >
+    </measurement.color.com.xj_919.and.view.CustomViewPager>
+    <!--<FrameLayout-->
+    <!--android:id="@+id/fl_main"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_weight="1"></FrameLayout>-->
+
+    <!--<RadioGroup-->
+    <!--android:id="@+id/rg_main"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="50dp"-->
+    <!--android:orientation="horizontal"-->
+    <!--&gt;-->
+
+    <!--<RadioButton-->
+    <!--android:id="@+id/rb1_main"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_margin="4dp"-->
+    <!--android:layout_marginRight="2dp"-->
+    <!--android:layout_weight="1"-->
+    <!--android:background="@drawable/radiobt_bg_selecter"-->
+    <!--android:button="@null"-->
+    <!--android:gravity="center"-->
+    <!--android:text="记录"-->
+    <!--android:textColor="@color/write"-->
+    <!--android:textSize="@dimen/rediobt_textsize"/>-->
+
+    <!--<RadioButton-->
+    <!--android:id="@+id/rb2_main"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_margin="4dp"-->
+    <!--android:layout_marginLeft="2dp"-->
+    <!--android:layout_weight="1"-->
+    <!--android:background="@drawable/radiobt_bg_selecter"-->
+    <!--android:button="@null"-->
+    <!--android:gravity="center"-->
+    <!--android:text="检测"-->
+    <!--android:textColor="@color/write"-->
+    <!--android:textSize="@dimen/rediobt_textsize"/>-->
+    <!--</RadioGroup>-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary"
+        android:orientation="horizontal"
+        >
+
+        <ImageView
+            android:id="@+id/iv_setting"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="8dp"
+            app:srcCompat="@drawable/ic_settings_white_24dp"/>
+
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tl_main"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/bar_height"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_weight="1"
+            app:tabIndicatorColor="@color/write"
+
+            app:tabIndicatorHeight="3dp"
+            app:tabMode="fixed"
+            app:tabSelectedTextColor="?attr/barSelectTextColor"
+            app:tabTextAppearance="@style/MyTabLayoutTextAppearance"
+            app:tabTextColor="?attr/barTextColor"
+            >
+            <!--app:tabGravity="center"-->
+        </android.support.design.widget.TabLayout>
+
+        <ImageView
+            android:id="@+id/iv_exit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_margin="8dp"
+            app:srcCompat="@drawable/ic_exit_to_app_white_24dp"/>
+    </LinearLayout>
+
+
+</LinearLayout>

@@ -1,5 +1,7 @@
 package measurement.color.com.xj_919.and.Utils.soft;
 
+import android.util.Log;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -13,6 +15,12 @@ import java.security.NoSuchAlgorithmException;
  * Created by wpc on 2016/9/14.
  */
 public class clsPublic {
+
+    public static String insertStringInParticularPosition(String src, String dec, int position){
+        StringBuffer stringBuffer = new StringBuffer(src);
+        return stringBuffer.insert(position, dec).toString();
+
+    }
     /**
      * java二进制,字节数组,字符,十六进制,BCD编码转换2007-06-07 00:17
      * <p>
@@ -55,6 +63,28 @@ public class clsPublic {
             sb.append(sTemp.toUpperCase());
         }
         return sb.toString();
+    }
+
+    public static Short[] toShortArray(byte[] src) {
+        Log.i("toShortArray", clsPublic.bytesToHexString(src));
+        int count = src.length / 2;
+        Short[] dest = new Short[count];
+        for (int i = 0; i < count; i++) {
+            dest[i] =(short) (((src[i * 2 + 1]&0xff) << 8) +(src[2 * i]&0xff));
+        }
+        return dest;
+    }
+
+    public static byte[] toByteArray(short[] src) {
+
+        int count = src.length;
+        byte[] dest = new byte[count * 2];
+        for (int i = 0; i < count; i++) {
+            dest[i * 2] = (byte) (src[i] >> 8);
+            dest[i * 2 + 1] = (byte) (src[i] >> 0);
+        }
+
+        return dest;
     }
 
 /** */

@@ -16,6 +16,7 @@ import android.widget.ListView;
 import java.util.ArrayList;
 
 import measurement.color.com.xj_919.R;
+import measurement.color.com.xj_919.and.adapter.ListAdapterForDiaplayFileList;
 
 
 @SuppressLint({"NewApi", "ValidFragment"})
@@ -74,7 +75,7 @@ public class ChoseFileDialog extends DialogFragment {
         View view = LayoutInflater.from(getActivity()).inflate(
                 R.layout.chosefiledialog_layout, null);
         lv = (ListView) view.findViewById(R.id.lv_chosefiledialog);
-        lv.setAdapter(new MyAdapter(mData, getActivity()));
+        lv.setAdapter(new ListAdapterForDiaplayFileList(mData, getActivity()));
         lv.setOnItemClickListener(mClickListener);
         lv.setOnItemLongClickListener(mOnItemLongClickListener);
         builder.setView(view);
@@ -84,7 +85,7 @@ public class ChoseFileDialog extends DialogFragment {
     }
 
     public void refeshList(ArrayList<FileInfo> newData) {
-        lv.setAdapter(new MyAdapter(newData, getActivity()));
+        lv.setAdapter(new ListAdapterForDiaplayFileList(newData, getActivity()));
     }
 
 //    interface onRefeshListener{

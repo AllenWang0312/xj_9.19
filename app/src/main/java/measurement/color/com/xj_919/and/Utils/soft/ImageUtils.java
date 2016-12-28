@@ -33,7 +33,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-import measurement.color.com.xj_919.and.Utils.io.FileUtils;
+import measurement.color.com.xj_919.and.Utils.io.FileAndPath;
 
 /**
  * <pre>
@@ -322,7 +322,7 @@ public class ImageUtils {
 
     public static boolean savaBitmapAsPNG(Bitmap bitmap, String filepath, String filename) {
 
-        if (FileUtils.createOrExistsDir(filepath)) {
+        if (FileAndPath.createOrExistsDir(filepath)) {
             if (new File(filepath).exists()) {
                 Log.i("filepath create", "success:" + filepath);
             }

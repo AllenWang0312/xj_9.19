@@ -1,14 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+
+
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <Button
+        android:id="@+id/bt_bluetooth"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="打开蓝牙"
-        android:id="@+id/bt_bluetooth"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="45dp"/>
+        android:layout_marginBottom="45dp"
+        android:text="打开蓝牙"/>
 </RelativeLayout>
+

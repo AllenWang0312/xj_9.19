@@ -1,36 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="measurement.color.com.xj_919">
+    <!--允许程序开机自动运行-->
+    <!--<uses-permission android:name="android.permission.INTERNET" />-->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
+    <!--<uses-permission android:name="android.permission.HARDWARE_TEST" />-->
     <!-- USB     这个权限是必须有的，否则操作不了硬件,google的文档没有说出来，据说是因为有过滤器后自动获得，但是我的项目没这句话不成功。 -->
     <uses-permission android:name="android.permission.LOCATION_HARDWARE"/>
     <!-- 这句话也是必须的 -->
     <uses-feature
         android:name="android.hardware.usb.host"
         android:required="true"/>
+    <!--震动权限-->
+    <uses-permission android:name="android.permission.VIBRATE" />
 
-    <!-- 管理    蓝牙    设备的权限 -->
+    <!--<uses-permission android:name="android.hardware.usb.accessory" />-->
+
+    <supports-screens android:anyDensity="true"/>
+    <!--&lt;!&ndash; 管理    蓝牙    设备的权限 &ndash;&gt;-->
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"/>
-    <!-- 使用蓝牙设备的权限 -->
+    <!--&lt;!&ndash; 使用蓝牙设备的权限 &ndash;&gt;-->
     <uses-permission android:name="android.permission.BLUETOOTH"/>
+    <!-- 读写sd卡的权限 -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"></uses-permission>
+    <!-- 获取手机信息的权限 -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_lancher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:largeHeap="true"
+        >
+        <!--<activity-->
+        <!--android:name=".and.activity.LogoSplashActivity"-->
+        <!--android:screenOrientation="portrait"-->
+        <!--android:launchMode="singleTask"-->
+        <!--android:theme="@style/SplashTheme">-->
+        <!--</activity>-->
+        <!--android:windowSoftInputMode="adjustPan"  整个activity上移-->
         <activity
             android:name=".and.activity.MainActivity"
             android:label="@string/app_name"
-            android:launchMode="singleTask"
-            >
-
+            android:launchMode="singleInstance"
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+
             <!-- 以下这个过滤器是要手工增加上，如果不增加也可以在代码中动态注册，不过我的代码是在这里注册 -->
             <intent-filter>
                 <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"/>
@@ -39,22 +61,34 @@
             <meta-data
                 android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"
                 android:resource="@xml/driver_filter"/>
+
+
         </activity>
 
         <!-- 静态注册usb广播接收者 -->
-        <!-- <receiver android:name=".and.fragment.first.usbBroadcastReceiver"> -->
-        <!-- <intent-filter android:priority="800"> -->
-        <!-- <action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"/> -->
-        <!-- <action android:name="android.hardware.usb.action.USB_DEVICE_DETACHED"/> -->
-        <!-- <action android:name="android.hardware.usb.action.USB_STATE"></action> -->
-        <!-- </intent-filter> -->
-        <!-- </receiver> -->
+        <!--<receiver android:name=".and.fragment.usb.USBManager$usbBroadcastReceiver">-->
+        <!--<intent-filter android:priority="800">-->
+        <!--<action android:name="android.hardware.usb.action.USB_DEVICE_ATTACHED"/>-->
+        <!--<action android:name="android.hardware.usb.action.USB_DEVICE_DETACHED"/>-->
+        <!--<action android:name="android.hardware.usb.action.USB_STATE"></action>-->
+        <!--</intent-filter>-->
+        <!--</receiver>-->
 
-        <activity android:name=".and.activity.TableActivity"
-                  android:label="@string/title_activity_table"
-                  >
-        </activity>
-
+        <!--<activity-->
+        <!--android:name="com.tencent.tauth.AuthActivity"-->
+        <!--android:noHistory="true"-->
+        <!--android:launchMode="singleTask" >-->
+        <!--<intent-filter>-->
+        <!--<action android:name="android.intent.action.VIEW" />-->
+        <!--<category android:name="android.intent.category.DEFAULT" />-->
+        <!--<category android:name="android.intent.category.BROWSABLE" />-->
+        <!--<data android:scheme="tencent1105766386" />-->
+        <!--</intent-filter>-->
+        <!--</activity>-->
+        <!--<activity android:name="com.tencent.connect.common.AssistActivity"-->
+        <!--android:theme="@android:style/Theme.Translucent.NoTitleBar"-->
+        <!--android:configChanges="orientation|keyboardHidden|screenSize"-->
+        <!--/>-->
     </application>
 
 </manifest>

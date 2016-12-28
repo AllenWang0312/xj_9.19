@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import measurement.color.com.xj_919.and.Utils.StringUtils;
+import measurement.color.com.xj_919.and.Utils.soft.StringUtils;
 
 /**
  * <pre>

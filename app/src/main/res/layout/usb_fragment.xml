@@ -1,36 +1,390 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center_vertical"
+    android:orientation="vertical">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:padding="@dimen/FragmentAPadding"
+            >
+
+            <android.support.v7.widget.CardView
+                style="@style/sameCornerRadiusCardview"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="#000000"
-    >
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                >
 
-    <Button
-        android:id="@+id/bt_usb"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="75dp"
-        android:text="连接usb"/>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="end"
+                    android:orientation="vertical"
+                    >
 
-    <ImageView
-        android:id="@+id/iv_usb_fragment"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="110dp"
-        app:srcCompat="@drawable/ic_menu_camera"/>
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="8dp"
+                        android:text="提示"
+                        android:textColor="?attr/secondTextColor"
+                        android:textSize="18sp"
+                        />
 
-    <Button
-        android:text="历史记录"
-        android:layout_width="wrap_content"
+                    <measurement.color.com.xj_919.and.view.CustomViewPager
+                        android:id="@+id/vp_test"
+                        android:layout_width="match_parent"
+                        android:layout_height="350dp"
+                        >
+                    </measurement.color.com.xj_919.and.view.CustomViewPager>
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        >
+
+                        <Button
+                            android:id="@+id/bt_last_test"
+                            style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="上一页"
+                            android:visibility="invisible"
+                            />
+
+                        <Button
+                            android:id="@+id/bt_next_test"
+                            style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="下一页"
+                            />
+
+                        <Button
+                            android:id="@+id/bt_save_usb"
+                            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                            android:layout_width="60dp"
+                            android:layout_height="40dp"
+                            android:layout_weight="1"
+                            android:text="保存"
+                            android:visibility="gone"/>
+
+                        <Button
+                            android:id="@+id/bt_print_usb"
+                            android:visibility="gone"
+                            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+                            android:layout_width="60dp"
+                            android:layout_height="40dp"
+                            android:layout_toStartOf="@+id/bt_save_usb"
+                            android:text="打印"
+                            />
+
+                        <Button
+                            android:id="@+id/bt_skep_test"
+                            style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="跳过"
+                            />
+                    </LinearLayout>
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/cv1_test"
+                android:layout_marginTop="16dp"
+                style="@style/sameCornerRadiusCardview"
+                android:layout_width="match_parent"
+                android:layout_height="240dp"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                android:visibility="gone"
+                >
+
+                <ImageView
+                    android:id="@+id/iv_usb_fragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="8dp"
+                    app:srcCompat="@drawable/ic_menu_gallery"/>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+
+                android:id="@+id/cv2_test"
+                style="@style/sameCornerRadiusCardview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp"
+                android:clickable="true"
+                android:foreground="?android:attr/selectableItemBackground"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="6dp"
+                        android:text="位置信息"
+                        android:textColor="?attr/textColor"
+                        android:textSize="18sp"
+                        />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="150dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        >
+
+                        <RelativeLayout
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_weight="1">
+
+                            <TextView
+                                android:id="@+id/center_location"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
+                                android:text="(320,240)"
+                                android:textColor="?attr/textColor"/>
+
+                            <Button
+                                android:id="@+id/bt_left_location"
+                                android:layout_width="36dp"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_toStartOf="@+id/center_location"
+                                android:text="-"/>
+
+                            <Button
+                                android:id="@+id/bt_right_location"
+                                android:layout_width="36dp"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_toEndOf="@+id/center_location"
+                                android:text="+"/>
+
+                            <Button
+                                android:id="@+id/bt_down_location"
+                                android:layout_width="36dp"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentTop="true"
+                                android:layout_alignStart="@+id/bt_up_location"
+                                android:text="-"/>
+
+                            <Button
+                                android:id="@+id/bt_up_location"
+                                android:layout_width="36dp"
+                                android:layout_height="wrap_content"
+                                android:layout_alignParentBottom="true"
+                                android:layout_centerHorizontal="true"
+                                android:text="+"/>
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="中心点位置:"
+                                android:textColor="?attr/textColor"
+                                android:layout_above="@+id/bt_left_location"
+                                android:layout_alignParentStart="true"/>
+
+                        </RelativeLayout>
+
+                        <TableLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical"
+                            android:shrinkColumns="0"
+
+                            >
+
+                            <TableRow>
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:text="中心点间距"
+                                    android:gravity="center_horizontal"
+                                    android:textColor="?attr/textColor"
+                                    />
+
+                                <Button
+                                    android:id="@+id/bt_bew_down"
+                                    android:layout_width="36dp"
+                                    android:layout_height="wrap_content"
+                                    android:text="-"/>
+
+                                <TextView
+                                    android:id="@+id/tv_between"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="12"
+                                    android:textColor="?attr/textColor"
+                                    />
+
+                                <Button
+                                    android:id="@+id/bt_bew_up"
+                                    android:layout_width="36dp"
+                                    android:layout_height="wrap_content"
+                                    android:text="+"/>
+                            </TableRow>
+
+                            <TableRow>
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:gravity="center_horizontal"
+                                    android:text="半径"
+                                    android:textColor="?attr/textColor"
+                                    />
+
+                                <Button
+                                    android:id="@+id/bt_r_down"
+                                    android:layout_width="36dp"
+                                    android:layout_height="wrap_content"
+                                    android:text="-"/>
+
+                                <TextView
+                                    android:id="@+id/tv_r_location"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:text="12"
+                                    android:textColor="?attr/textColor"
+                                    />
+
+                                <Button
+                                    android:id="@+id/bt_r_up"
+                                    android:layout_width="36dp"
+                                    android:layout_height="wrap_content"
+                                    android:text="+"/>
+                            </TableRow>
+                            <TableRow
+
+                                >
+                            </TableRow>
+
+                        </TableLayout>
+
+                    </LinearLayout>
+
+                    <ListView
+                        android:id="@+id/lv_cache_list"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:visibility="gone"
+                       >
+
+                    </ListView>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="end"
+                        android:orientation="horizontal"
+                        >
+
+                        <CheckBox
+                            android:text="使用下位机位置"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/cb_use_under_position"
+                            android:textColor="?attr/textColor"
+                            android:layout_weight="1"/>
+
+                        <Button
+                            android:visibility="gone"
+                            android:id="@+id/bblr_test"
+                            android:text="白板录入"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            />
+
+                        <Button
+                            android:id="@+id/bt_usb"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:text="检测"
+                            />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="9dp"
-        android:id="@+id/bt_log"
-        android:layout_alignBaseline="@+id/bt_usb"
-        android:layout_alignBottom="@+id/bt_usb"
-        android:layout_alignParentStart="true"/>
-</RelativeLayout>
+        android:layout_gravity="bottom"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        >
+
+        <Button
+            android:text="关灯"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/bt_turn_down_light"
+            android:layout_weight="1"/>
+
+        <EditText
+            android:id="@+id/et_tips_usb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="18dp"
+            android:layout_weight="1"
+            android:ems="8"
+            android:hint="检测人员/备注"
+            android:inputType="textPersonName"
+            android:textColor="?attr/textColor"
+            android:textColorHint="?attr/secondTextColor"/>
+
+        <CheckBox
+            android:id="@+id/cb_usb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@+id/bt_usb"
+            android:checked="true"
+            android:text="@string/auto_save"
+
+            android:textColor="?attr/textColor"/>
+
+    </LinearLayout>
+
+
+</LinearLayout>

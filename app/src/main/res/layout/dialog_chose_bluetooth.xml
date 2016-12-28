@@ -1,10 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
               android:layout_width="300dp"
-              android:layout_height="500dp"
-              android:paddingLeft="24dp"
-              android:paddingRight="24dp"
-              android:orientation="vertical">
+              android:layout_height="wrap_content"
+              android:orientation="vertical"
+              android:paddingLeft="18dp"
+              android:paddingRight="18dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="连接过的设备"
+        />
 
     <ListView
         android:id="@+id/lv1_dialog_bluetooth"
@@ -13,32 +20,20 @@
         android:minHeight="100dp"
         />
 
+    <ProgressBar
+        android:id="@+id/pb_dialog_bluetooth"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="right"
+        android:visibility="invisible"/>
 
-    <RelativeLayout
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        >
-        <ProgressBar
-
-            style="?android:attr/progressBarStyle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/pb_dialog_bluetooth"
-            android:visibility="gone"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"/>
-
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="搜索新设备"
-            android:layout_gravity="end"
-            android:id="@+id/bt_dialog_bluetooth"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentEnd="true"/>
-    </RelativeLayout>
-
-
+        android:text="发现设备"
+        />
 
     <ListView
         android:id="@+id/lv2_dialog_bluetooth"
@@ -46,6 +41,25 @@
         android:layout_height="wrap_content"
         android:minHeight="100dp"
         />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:orientation="horizontal"
+        >
+
+        <Button
+            android:id="@+id/bt_dialog_bluetooth"
+            style="@style/Widget.AppCompat.Button.Borderless.Colored"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:text="搜索新设备"/>
+
+    </LinearLayout>
 
 
 </LinearLayout>

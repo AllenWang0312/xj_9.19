@@ -1,58 +1,189 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="值设置">
-        <ListPreference
-            android:key="key_zhaoming"
-            android:defaultValue="list key default value"
-            android:title="照明"
-            android:summary="环境光照条件"
-            android:entries="@array/list_preference"
-            android:entryValues="@array/list_preference"
-            android:dialogTitle="光照" />
-        <ListPreference
-            android:key="key_guancha"
-            android:defaultValue="list key default value"
-            android:title="观察"
-            android:summary="观测角度"
-            android:entries="@array/list2_preference"
-            android:entryValues="@array/list2_preference"
-            android:dialogTitle="观察" />
-    </PreferenceCategory>
-    <PreferenceCategory android:title="图表">
-        <ListPreference
-            android:key="key_chart"
-            android:defaultValue="list key default value"
-            android:title="图标样式"
-            android:summary="选择默认的图标样式"
-            android:entries="@array/list3_preference"
-            android:entryValues="@array/list3_preference"
-            android:dialogTitle="图标样式" />
-        <ListPreference
-            android:key="key_chart_pre"
-            android:defaultValue="list key default value"
-            android:title="预览图滑动轴"
-            android:summary="设置预览图哪个方向可以滑动"
-            android:entries="@array/list4_preference"
-            android:entryValues="@array/list4_preference"
-            android:dialogTitle="预览图滑动轴" />
-        <CheckBoxPreference
-            android:key="key_pre_chart_color"
-            android:defaultValue="checkbox default value"
-            android:summary="是否打开"
-            android:title="预览框颜色"
-            />
-    </PreferenceCategory>
-    <PreferenceCategory android:title="其他">
+    <!--<PreferenceScreen android:title="项目设置">-->
+        <PreferenceCategory android:title="项目设置">
+            <EditTextPreference
+                android:title="拍照几次"
+                android:key="TestTimes"
+                android:defaultValue="@string/default_testtimes"
+                android:summary="1"
+                />
+            <!--<ListPreference-->
+            <!--android:key="key_zhaoming"-->
+            <!--android:defaultValue="list key default value"-->
+            <!--android:title="照明"-->
+            <!--android:summary="环境光照条件"-->
+            <!--android:entries="@array/list_preference"-->
+            <!--android:entryValues="@array/list_preference"-->
+            <!--android:dialogTitle="光照" />-->
+            <!--<ListPreference-->
+            <!--android:key="key_guancha"-->
+            <!--android:defaultValue="list key default value"-->
+            <!--android:title="观察"-->
+            <!--android:summary="观测角度"-->
+            <!--android:entries="@array/list2_preference"-->
+            <!--android:entryValues="@array/list2_preference"-->
+            <!--android:dialogTitle="观察" />-->
+            <ListPreference
+                android:key="key_test1_set"
+                android:defaultValue="@string/default_project"
+                android:title="样本1"
+                android:summary="选择检测条目"
+                android:entries="@array/list2_preference"
+                android:entryValues="@array/list2_preference"
+                android:dialogTitle="样本1" />
+            <ListPreference
+                android:key="key_test2_set"
+                android:defaultValue="@string/default_project"
+                android:title="样本2"
+                android:summary="选择检测条目"
+                android:entries="@array/list2_preference"
+                android:entryValues="@array/list2_preference"
+                android:dialogTitle="样本2" />
+            <ListPreference
+                android:key="key_test3_set"
+                android:defaultValue="@string/default_project"
+                android:title="样本3"
+                android:summary="选择检测条目"
+                android:entries="@array/list2_preference"
+                android:entryValues="@array/list2_preference"
+                android:dialogTitle="样本3" />
+            <ListPreference
+                android:key="key_test4_set"
+                android:defaultValue="@string/default_project"
+                android:title="样本4"
+                android:summary="选择检测条目"
+                android:entries="@array/list2_preference"
+                android:entryValues="@array/list2_preference"
+                android:dialogTitle="样本4" />
+            <ListPreference
+                android:key="key_test5_set"
+                android:defaultValue="@string/default_project"
+                android:title="样本5"
+                android:summary="选择检测条目"
+                android:entries="@array/list2_preference"
+                android:entryValues="@array/list2_preference"
+                android:dialogTitle="样本5" />
+            <ListPreference
+                android:key="key_test6_set"
+                android:defaultValue="@string/default_project"
+                android:title="样本6"
+                android:summary="选择检测条目"
+                android:entries="@array/list2_preference"
+                android:entryValues="@array/list2_preference"
+                android:dialogTitle="样本6" />
+            <ListPreference
+                android:key="key_test7_set"
+                android:defaultValue="@string/default_project"
+                android:title="样本7"
+                android:summary="选择检测条目"
+                android:entries="@array/list2_preference"
+                android:entryValues="@array/list2_preference"
+                android:dialogTitle="样本7" />
+            <ListPreference
+                android:key="key_test8_set"
+                android:defaultValue="@string/default_project"
+                android:title="样本8"
+                android:summary="选择检测条目"
+                android:entries="@array/list2_preference"
+                android:entryValues="@array/list2_preference"
+                android:dialogTitle="样本8" />
+            <ListPreference
+                android:key="key_test9_set"
+                android:defaultValue="@string/default_project"
+                android:title="样本9"
+                android:summary="选择检测条目"
+                android:entries="@array/list2_preference"
+                android:entryValues="@array/list2_preference"
+                android:dialogTitle="样本9" />
+        </PreferenceCategory>
+    <!--</PreferenceScreen>-->
+    <!--<PreferenceCategory android:title="图表">-->
+        <!--<ListPreference-->
+            <!--android:key="key_chart"-->
+            <!--android:defaultValue="list key default value"-->
+            <!--android:title="图标样式"-->
+            <!--android:summary="选择默认的图标样式"-->
+            <!--android:entries="@array/list3_preference"-->
+            <!--android:entryValues="@array/list3_preference"-->
+            <!--android:dialogTitle="图标样式" />-->
+        <!--<ListPreference-->
+            <!--android:key="key_chart_pre"-->
+            <!--android:defaultValue="list key default value"-->
+            <!--android:title="预览图滑动轴"-->
+            <!--android:summary="设置预览图哪个方向可以滑动"-->
+            <!--android:entries="@array/list4_preference"-->
+            <!--android:entryValues="@array/list4_preference"-->
+            <!--android:dialogTitle="预览图滑动轴" />-->
+        <!--<CheckBoxPreference-->
+            <!--android:key="key_pre_chart_color"-->
+            <!--android:defaultValue="checkbox default value"-->
+            <!--android:summary="是否打开"-->
+            <!--android:title="预览框颜色"-->
+            <!--/>-->
+    <!--</PreferenceCategory>-->
+    <PreferenceCategory android:title="打印设置">
         <!--<RingtonePreference-->
             <!--android:key="rington"-->
             <!--android:title="应用版本"-->
             <!--&gt;-->
         <!--</RingtonePreference>-->
+        <SwitchPreference
+            android:key="print_enable_key"
+            android:defaultValue="true"
+            android:summary="打印设置可用"
+            android:title="打印设置开关"
+            >
+
+        </SwitchPreference>
         <EditTextPreference
-            android:key="edittext_key"
-            android:defaultValue="edit default value"
-            android:summary="edit summary"
-            android:title="edit title" />
+            android:dependency="print_enable_key"
+            android:key="print_start_key"
+            android:defaultValue="每条记录的开始(分割线)"
+            android:summary="start"
+            android:title="打印头" />
+        <PreferenceScreen
+            android:dependency="print_enable_key"
+            android:key="screen_preference"
+            android:title="打印项目设置"
+            android:summary="选择项目"
+            >
+            <PreferenceCategory android:title="打印设置">
+                <!-- You can place more preferences here that will be shown on the next screen. -->
+                <CheckBoxPreference
+                    android:key="time_key"
+                    android:title="时间"
+                    android:summary="勾选即打印该项数据" />
+
+                <CheckBoxPreference
+                    android:key="R1_key"
+                    android:title="R1"
+                    android:summary="勾选即打印该项数据" />
+                <CheckBoxPreference
+                    android:key="G1_key"
+                    android:title="G1"
+                    android:summary="勾选即打印该项数据" />
+                <CheckBoxPreference
+                    android:key="B1_key"
+                    android:title="B1"
+                    android:summary="勾选即打印该项数据" />
+
+                <CheckBoxPreference
+                    android:key="result_key"
+                    android:title="结果"
+                    android:summary="勾选即打印该项数据" />
+
+            </PreferenceCategory>
+
+        </PreferenceScreen>
+        <EditTextPreference
+            android:dependency="print_enable_key"
+            android:key="print_end_key"
+            android:defaultValue="每条记录的结束(分割线)"
+            android:summary="end"
+            android:title="打印尾" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="其他">
         <Preference
             android:key="share"
             android:title="分享app"
@@ -61,9 +192,8 @@
         </Preference>
         <EditTextPreference
             android:key="num_key"
-            android:defaultValue="哈哈哈哈"
+            android:defaultValue="发送意见给我们吧"
             android:summary="发送意见给我们吧"
             android:title="反馈信息" />
-
     </PreferenceCategory>
 </PreferenceScreen>

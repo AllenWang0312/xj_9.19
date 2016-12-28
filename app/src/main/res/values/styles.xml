@@ -1,25 +1,118 @@
 <resources>
 
+    <style name="SplashTheme" parent="AppTheme">
+        <item name="android:windowBackground">@drawable/logo_splash</item>
+    </style>
+
+    <style name="ToolbarTheme" parent="@style/ThemeOverlay.AppCompat.ActionBar">
+        <!-- menu中showAsAction设置为ifRoom和always的item项（即操作栏上）字体颜色 -->
+        <!--<item name="actionMenuTextColor">#00ad56</item>-->
+        <!-- menu中showAsAction设置为ifRoom和always的item项（即操作栏上）字体大小 -->
+        <!--<item name="actionMenuTextAppearance">@style/ToolbarMenuTextSize</item>-->
+        <!-- 设置标题、menu中所有item字体颜色 -->
+        <!--<item name="android:textColorPrimary">@android:color/white</item>-->
+        <!-- 设置子标题字体颜色 -->
+        <!--<item name="android:textColorSecondary">#ffad56</item>-->
+    </style>
+
+    <!-- toolbar菜单中showAsAction为ifRoom的item项的文字尺寸 -->
+    <style name="ToolbarMenuTextSize" parent="@style/TextAppearance.AppCompat.Menu">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <!-- toolbar标题字体样式 -->
+    <style name="ToolbarTitleStyle" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <!-- toolbar弹出菜单样式 -->
+    <style name="ToolbarPopupTheme" parent="@style/ThemeOverlay.AppCompat">
+        <item name="android:colorBackground">#ffffaa</item>
+        <item name="android:textColor">#fa4081</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.DayNight.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <!--<item name="android:colorBackground">@android:color/background_light</item>-->
-
+        <!--<item name="android:dialogTheme">@style/Mdialog</item>-->
+        <!--<item name="android:windowContentTransitions">true</item>-->
         <item name="android:buttonStyle">@style/Widget.AppCompat.Button.Colored</item>
+        <!--<item name="android:actionMenuTextColor">@android:color/black</item>-->
+        <!-- Customize your theme here. -->
+        <!--<item name="android:colorBackground">@android:color/background_light</item>-->
     </style>
 
-    <style name="AppTheme.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
+    <!-- 日间模式 -->
+    <style name="AppTheme.day" parent="AppTheme">
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+        <item name="containerBackground">@color/contener_bg</item>
+        <item name="cardBackground">@color/card_bg</item>
+        <item name="textColor">@color/text_color</item>
+        <item name="secondTextColor">@color/second_text_color</item>
+        <item name="barSelectTextColor">@color/bar_text_selected_color</item>
+        <item name="barTextColor">@color/bar_text_color</item>
+        <!--<item name="selectorBtn">@drawable/navigator_list_item_day</item>-->
+        <!--<item name="selectorListItem">@drawable/list_item_day</item>-->
     </style>
+
+
+    <!-- 夜间模式 -->
+    <style name="AppTheme.night" parent="AppTheme">
+        <item name="colorPrimaryDark">@color/colorPrimary_night</item>
+        <item name="colorPrimary">@color/colorPrimaryDark_night</item>
+        <item name="colorAccent">@color/colorAccent_night</item>
+
+        <item name="containerBackground">@color/contener_bg_night</item>
+        <item name="cardBackground">@color/card_bg_night</item>
+        <item name="textColor">@color/text_color_night</item>
+        <item name="secondTextColor">@color/second_text_color_night</item>
+        <item name="barSelectTextColor">@color/bar_text_selected_color_night</item>
+        <item name="barTextColor">@color/bar_text_selected_night</item>
+        <!--<item name="selectorBtn">@drawable/navigator_list_item_night</item>-->
+        <!--<item name="selectorListItem">@drawable/list_item_night</item>-->
+    </style>
+
+    <style name="Toolbar_Popup" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:textColorPrimary">@color/colorPrimary</item>
+        <item name="android:background">#fff</item>
+    </style>
+
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
-    <style name="Apptheme.by" parent="AppTheme"/>
+    <style name="sameCornerRadiusCardview" parent="Base.CardView">
+        <item name="cardCornerRadius">4dp</item>
+        <item name="cardElevation">6dp</item>
+       <item name="cardBackgroundColor">?attr/cardBackground</item>
+        <!--<item name="contentPaddingLeft">10dp</item>-->
+        <!--<item name="contentPaddingRight">10dp</item>-->
+        <!--<item name="contentPaddingBottom">10dp</item>-->
+    </style>
+
+    <style name="Mdialog" parent="android:Theme.Holo.Light.Dialog">
+        <!--<item name="android:windowBackground"> @drawable/bg</item>-->
+        <item name="android:windowFrame">@null</item>
+        <item name="android:backgroundDimEnabled">true</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <!--<item name="android:windowFullscreen">true</item>-->
+        <item name="android:windowContentOverlay">@null</item>
+
+    </style>
+
+    <style name="MyTabLayoutTextAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textSize">@dimen/bar_textsize</item>
+    </style>
+
+    <style name="MyTabLayoutTextAppearanceInverse" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">@android:color/holo_red_light</item>
+    </style>
+
 
 </resources>

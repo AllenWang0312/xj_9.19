@@ -1,7 +1,644 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:orientation="vertical"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center_vertical"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:orientation="vertical">
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:gravity="center_vertical"-->
+            <!--android:orientation="horizontal">-->
+
+            <!--<TextView-->
+            <!--android:id="@+id/textView2"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_margin="8dp"-->
+            <!--android:layout_weight="1"-->
+            <!--android:text="项目设置"-->
+            <!--android:textSize="20sp"/>-->
+
+            <!--<Switch-->
+            <!--android:id="@+id/sw_tysz_setting"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="统一设置"-->
+            <!--android:textColor="#aaaaaa"-->
+            <!--/>-->
+            <!--</LinearLayout>-->
+
+            <!--<android.support.v7.widget.CardView-->
+            <!--style="@style/sameCornerRadiusCardview"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:padding="16dp"-->
+            <!--&gt;-->
+
+            <!--<LinearLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:orientation="vertical">-->
+
+            <!--<TableLayout-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--&gt;-->
+
+            <!--<TableRow-->
+            <!--android:layout_marginTop="8dp"-->
+            <!--&gt;-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:gravity="center"-->
+            <!--android:text="样品1"-->
+            <!--/>-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:gravity="center"-->
+            <!--android:text="样品2"-->
+            <!--/>-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:gravity="center"-->
+            <!--android:text="样品3"-->
+            <!--/>-->
+            <!--</TableRow>-->
+
+            <!--<TableRow>-->
+
+            <!--<Spinner-->
+            <!--android:id="@+id/sp1_setting"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:entries="@array/list2_preference"></Spinner>-->
+
+            <!--<Spinner-->
+            <!--android:id="@+id/sp2_setting"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:entries="@array/list2_preference"></Spinner>-->
+
+            <!--<Spinner-->
+            <!--android:id="@+id/sp3_setting"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:entries="@array/list2_preference"></Spinner>-->
+            <!--</TableRow>-->
+
+            <!--<TableRow-->
+
+            <!--android:layout_marginTop="8dp">-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:gravity="center"-->
+            <!--android:text="样品4"-->
+            <!--/>-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:gravity="center"-->
+            <!--android:text="样品5"-->
+            <!--/>-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:gravity="center"-->
+            <!--android:text="样品6"-->
+            <!--/>-->
+            <!--</TableRow>-->
+
+            <!--<TableRow-->
+            <!--&gt;-->
+
+            <!--<Spinner-->
+            <!--android:id="@+id/sp4_setting"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:entries="@array/list2_preference"></Spinner>-->
+
+            <!--<Spinner-->
+            <!--android:id="@+id/sp5_setting"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:entries="@array/list2_preference"></Spinner>-->
+
+            <!--<Spinner-->
+            <!--android:id="@+id/sp6_setting"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:entries="@array/list2_preference"></Spinner>-->
+            <!--</TableRow>-->
+
+            <!--<TableRow-->
+            <!--android:layout_marginTop="8dp">-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:gravity="center"-->
+            <!--android:text="样品7"-->
+            <!--/>-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:gravity="center"-->
+            <!--android:text="样品8"-->
+            <!--/>-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:gravity="center"-->
+            <!--android:text="样品9"-->
+            <!--/>-->
+            <!--</TableRow>-->
+
+            <!--<TableRow-->
+            <!--android:layout_marginBottom="8dp"-->
+            <!--&gt;-->
+
+            <!--<Spinner-->
+            <!--android:id="@+id/sp7_setting"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:entries="@array/list2_preference"></Spinner>-->
+
+            <!--<Spinner-->
+            <!--android:id="@+id/sp8_setting"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:entries="@array/list2_preference"></Spinner>-->
+
+            <!--<Spinner-->
+            <!--android:id="@+id/sp9_setting"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_weight="1"-->
+            <!--android:entries="@array/list2_preference"></Spinner>-->
+            <!--</TableRow>-->
+            <!--</TableLayout>-->
+            <!--</LinearLayout>-->
+
+            <!--</android.support.v7.widget.CardView>-->
+
+            <TextView
+                android:id="@+id/textView3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_margin="8dp"
+                android:text="其他设置"
+                android:textColor="?attr/textColor"
+                android:textSize="20sp"/>
+
+            <android.support.v7.widget.CardView
+                style="@style/sameCornerRadiusCardview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_horizontal"
+                    android:orientation="vertical"
+                    >
+
+                    <TableLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_horizontal"
+                            >
+
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:text="取样次数"
+                                android:textColor="?attr/textColor"
+                                android:textSize="16sp"
+                                />
+
+                            <Button
+                                android:id="@+id/bt_down_tt"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:text="-"/>
+
+                            <TextView
+                                android:id="@+id/tv_test_times"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:gravity="center_horizontal"
+                                android:text="1"
+                                android:textColor="?attr/textColor"/>
+
+                            <Button
+                                android:id="@+id/bt_up_tt"
+                                android:layout_width="40dp"
+                                android:layout_height="40dp"
+                                android:text="+"/>
+                        </TableRow>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="4dp"
+                            android:text="参数说明:一次检测取样的次数"
+                            android:textColor="?attr/secondTextColor"
+                            android:textSize="16sp"
+                            />
+
+                        <TableRow
+                            >
+
+                            <TextView
+                                android:id="@+id/tv_time_between"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="8dp"
+                                android:layout_marginLeft="8dp"
+                                android:layout_marginRight="32dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_weight="1"
+                                android:text="拍摄间隔"
+                                android:textColor="?attr/textColor"
+                                android:textSize="16sp"
+                                />
+
+                            <SeekBar
+                                android:id="@+id/sb_time_between"
+                                android:layout_width="0dp"
+                                android:layout_gravity="center_vertical"
+                                android:layout_weight="2"
+                                android:max="5"
+                                />
+                        </TableRow>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="4dp"
+                            android:text="参数说明:取样之间的间隔(单位:s)"
+                            android:textColor="?attr/secondTextColor"
+                            android:textSize="16sp"
+                            />
+
+                        <TableRow
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:id="@+id/tv_pgcs_setting"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="8dp"
+                                android:layout_marginLeft="8dp"
+                                android:layout_marginRight="32dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_weight="1"
+                                android:text="补光参数"
+                                android:textColor="?attr/textColor"
+                                android:textSize="16sp"
+                                />
+
+                            <SeekBar
+                                android:id="@+id/sb_pgcs_setting"
+                                android:layout_width="0dp"
+                                android:layout_gravity="center_vertical"
+                                android:layout_weight="2"
+                                android:max="255"
+                                />
+                        </TableRow>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="4dp"
+                            android:text="参数说明:数值越大图像越明亮(参考值:190)"
+                            android:textColor="?attr/secondTextColor"
+                            android:textSize="16sp"
+                            />
+
+                        <TableRow
+                            android:layout_height="wrap_content"
+                            >
+
+                            <TextView
+                                android:id="@+id/tv_z_setting"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="8dp"
+                                android:layout_marginLeft="8dp"
+                                android:layout_marginRight="32dp"
+                                android:layout_marginTop="8dp"
+                                android:layout_weight="1"
+                                android:text="z值"
+                                android:textColor="?attr/textColor"
+                                android:textSize="16sp"
+                                />
+
+                            <SeekBar
+                                android:id="@+id/sb_z_setting"
+                                android:layout_width="0dp"
+                                android:layout_gravity="center_vertical"
+                                android:layout_weight="2"
+                                android:max="30"
+                                />
+
+                            <Switch
+                                android:id="@+id/sw_explore"
+                                android:checked="true"
+                                android:layout_gravity="center_vertical"
+                                android:textColor="?attr/textColor"
+                                android:text="曝光平衡"
+                                />
+                        </TableRow>
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="4dp"
+                            android:text="参数说明:数值越小边缘增益越大(会溢出)"
+                            android:textColor="?attr/secondTextColor"
+                            android:textSize="16sp"
+                            />
+                        <!--<TableRow>-->
+
+                        <!--<TextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:gravity="end"-->
+                        <!--android:text="取样次数"-->
+                        <!--android:textSize="16sp"-->
+                        <!--/>-->
+
+                        <!--<EditText-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:ems="10"-->
+                        <!--android:hint="1"-->
+                        <!--android:inputType="number"/>-->
+                        <!--</TableRow>-->
+
+                        <!--<TableRow>-->
+
+                        <!--<TextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:gravity="end"-->
+                        <!--android:text="取样次数"-->
+                        <!--android:textSize="16sp"-->
+                        <!--/>-->
+
+                        <!--<EditText-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:ems="10"-->
+                        <!--android:hint="1"-->
+                        <!--android:inputType="number"/>-->
+                        <!--</TableRow>-->
+
+                        <!--<TableRow>-->
+
+                        <!--<TextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:gravity="end"-->
+                        <!--android:text="取样次数"-->
+                        <!--android:textSize="16sp"-->
+                        <!--/>-->
+
+                        <!--<EditText-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:ems="10"-->
+                        <!--android:hint="1"-->
+                        <!--android:inputType="number"/>-->
+                        <!--</TableRow>-->
+
+                        <!--<TableRow>-->
+
+                        <!--<TextView-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:gravity="end"-->
+                        <!--android:text="取样次数"-->
+                        <!--android:textSize="16sp"-->
+                        <!--/>-->
+
+                        <!--<EditText-->
+                        <!--android:layout_width="wrap_content"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:ems="10"-->
+                        <!--android:hint="1"-->
+                        <!--android:inputType="number"/>-->
+                        <!--</TableRow>-->
+
+                    </TableLayout>
+                </LinearLayout>
+            </android.support.v7.widget.CardView>
+
+            <TextView
+                android:id="@+id/textView4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:text="参考参数"
+                android:textColor="?attr/textColor"
+                android:textSize="20sp"/>
+
+            <android.support.v7.widget.CardView
+                style="@style/sameCornerRadiusCardview"
+                android:layout_width="match_parent"
+                android:layout_height="140dp">
+
+                <TableLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <TableRow
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        >
+
+                        <TextView
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:textColor="?attr/textColor"
+                            />
+
+                        <TextView
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="当前值"
+                            android:textColor="?attr/textColor"
+                            />
+
+                        <TextView
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="参考值"
+                            android:textColor="?attr/textColor"
+                            />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:textColor="?attr/textColor"
+                        >
+
+                        <TextView
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="中心点位置"
+                            android:textColor="?attr/textColor"
+                            />
+
+                        <TextView
+                            android:id="@+id/tv_cent_setting"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="(315,243)"
+                            android:textColor="?attr/textColor"/>
+
+                        <TextView
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="(315,243)"
+                            android:textColor="?attr/textColor"
+                            />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_weight="1"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="中心点间距"
+                            android:textColor="?attr/textColor"
+                            />
+
+                        <TextView
+                            android:id="@+id/tv_bet_setting"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="145"
+                            android:textColor="?attr/textColor"/>
+
+                        <TextView
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="145"
+                            android:textColor="?attr/textColor"
+                            />
+                    </TableRow>
+
+                    <TableRow
+                        android:layout_weight="1"
+                        android:gravity="center">
+
+                        <TextView
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="取样区域半径"
+                            android:textColor="?attr/textColor"
+                            />
+
+                        <TextView
+                            android:id="@+id/tv_r_setting"
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="40"
+                            android:textColor="?attr/textColor"/>
+
+                        <TextView
+                            android:layout_weight="1"
+                            android:gravity="center"
+                            android:text="40"
+                            android:textColor="?attr/textColor"
+                            />
+                    </TableRow>
+                </TableLayout>
+
+            </android.support.v7.widget.CardView>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="right"
+            android:orientation="horizontal"
+
+            >
+
+            <Button
+                android:id="@+id/bt_tb_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="同步"
+                />
+
+            <Button
+                android:id="@+id/bt_save_setting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="保存"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

@@ -11,10 +11,15 @@
         <item>D65</item>
         <item>D75</item>
     </string-array>
-
+    <string name="default_project">项目一</string>
+    <string name="default_testtimes">1</string>
     <string-array name="list2_preference">
-        <item>2°</item>
-        <item>10°</item>
+        <item>项目一</item>
+        <item>项目二</item>
+        <item>项目三</item>
+        <item>项目四</item>
+        <item>项目五</item>
+        <item>项目六</item>
     </string-array>
 
     <string-array name="list3_preference">

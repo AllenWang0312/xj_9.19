@@ -2,10 +2,9 @@ package measurement.color.com.xj_919.and.Utils.io;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,78 +12,90 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Toast;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
 
-import measurement.color.com.xj_919.and.Utils.FileOpener.ChoseFileDialog;
-import measurement.color.com.xj_919.and.Utils.FileOpener.FileInfo;
-import measurement.color.com.xj_919.and.Utils.StringUtils;
+import measurement.color.com.xj_919.and.Utils.io.FileOpener.ChoseFileDialog;
+import measurement.color.com.xj_919.and.Utils.io.FileOpener.FileInfo;
 
 public class FileUtils {
 
-    public static final String packagename = "measurement.color.com.xj_919";
-    public static final String SYSTEM_DATA_PATH = "/data/data/" + packagename;
-
-    public static final String SDCARD_PATH = getSDcardPath();
-public static final String SD_xj=SDCARD_PATH+"/xj_919";
-    //    public static final String IMG=SYSTEM_DATA_PATH+"/img";
-    public static final String IMG = SD_xj + "/img";
-    public static final String Excel = SD_xj + "/excel";
-
-    public static final String IMG_NATIVE_DATA = SD_xj + "/imgCache";
-    public static final String FILE_PATH = SYSTEM_DATA_PATH + "/file";
-
-    public static boolean deleteFileIfExist(String absPath) {
-        File file = new File(absPath);
-        if (file.exists()) {
-            file.delete();
-            Log.i("deleteFileIfExist:", absPath);
-            return true;
+    /**
+     * 删除单个文件
+     * @param   filePath    被删除文件的文件名
+     * @return 文件删除成功返回true，否则返回false
+     */
+    public static boolean deleteFile(String filePath) {
+        File file = new File(filePath);
+        if (file.isFile() && file.exists()) {
+            return file.delete();
         }
         return false;
     }
-
-    public static void playFileWithSystemSeveice(Activity context, String path) {
-        // TODO Auto-generated method stub
-        Log.i("filepath", path);
-        if (path.endsWith(".mp4")) {
-            Uri uri = Uri.parse("file://" + path);
-            Intent it = new Intent(Intent.ACTION_VIEW);
-            it.setDataAndType(uri, "video/*");
-            context.startActivity(it);
-            return;
+    public static boolean deleteFile(String dirPath,String name) {
+        File file = new File(dirPath,name);
+        if (file.isFile() && file.exists()) {
+            return file.delete();
         }
-        Intent intent = new Intent("android.intent.action.VIEW");
-        intent.addCategory("android.intent.category.DEFAULT");
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        intent.setClassName("com.tencent.mobileqq", "QQAct");
-        Uri uri = Uri.parse(path);
-
-        if (path.endsWith(".pdf")) {
-            intent.setDataAndType(uri, "application/pdf");
-        } else if (path.endsWith(".ppt")) {
-            intent.setDataAndType(uri, "application/vnd.ms-powerpoint");
-        } else if (path.endsWith(".xls")) {
-            intent.setDataAndType(uri, "application/vnd.ms-excel");
+        return false;
+    }
+    /**
+     * 删除文件夹以及目录下的文件
+     * @param   filePath 被删除目录的文件路径
+     * @return  目录删除成功返回true，否则返回false
+     */
+    public static boolean deleteDirectory(String filePath) {
+        boolean flag = false;
+        //如果filePath不以文件分隔符结尾，自动添加文件分隔符
+        if (!filePath.endsWith(File.separator)) {
+            filePath = filePath + File.separator;
         }
-        try {
-            context.startActivity(intent);
-            return;
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(context, "No Application Available to View ",
-                    Toast.LENGTH_SHORT).show();
+        File dirFile = new File(filePath);
+        if (!dirFile.exists() || !dirFile.isDirectory()) {
+            return false;
         }
+        flag = true;
+        File[] files = dirFile.listFiles();
+        //遍历删除文件夹下的所有文件(包括子目录)
+        for (int i = 0; i < files.length; i++) {
+            if (files[i].isFile()) {
+                //删除子文件
+                flag = deleteFile(files[i].getAbsolutePath());
+                if (!flag) break;
+            } else {
+                //删除子目录
+                flag = deleteDirectory(files[i].getAbsolutePath());
+                if (!flag) break;
+            }
+        }
+        if (!flag) return false;
+        //删除当前空目录
+        return dirFile.delete();
     }
 
+    /**
+     *  根据路径删除指定的目录或文件，无论存在与否
+     *@param filePath  要删除的目录或文件
+     *@return 删除成功返回 true，否则返回 false。
+     */
+    public static boolean DeleteFolder(String filePath) {
+        File file = new File(filePath);
+        if (!file.exists()) {
+            return false;
+        } else {
+            if (file.isFile()) {
+                // 为文件时调用删除文件方法
+                return deleteFile(filePath);
+            } else {
+                // 为目录时调用删除目录方法
+                return deleteDirectory(filePath);
+            }
+        }
+    }
     @SuppressLint("NewApi")
     public static void showChoseFileToPlayDialog(String dirPath,
                                                  String fileType, final Activity context) {
@@ -103,7 +114,7 @@ public static final String SD_xj=SDCARD_PATH+"/xj_919";
                                 // TODO Auto-generated method stub
                                 FileInfo fi = items.get(arg2);
                                 String path = fi.getDirPath() + fi.getName();
-                                playFileWithSystemSeveice(context, path);
+                                openFile(context, new File(path));
                             }
                         }, null);
                 dialog.show(context.getFragmentManager(), "chosefiledialog");
@@ -177,131 +188,47 @@ public static final String SD_xj=SDCARD_PATH+"/xj_919";
         }
         return vediolist;
     }
-
-    public static String getSDcardPath() {
-        String str = Environment.getExternalStorageDirectory().getPath();
-        Log.i("getSDcardPath", str);
-        return str;
-    }
-
-    /**
-     * 获取外置SD卡路径
-     *
-     * @return 应该就一条记录或空
-     */
-    public static List<String> getExtSDCardPath() {
-        List<String> lResult = new ArrayList<String>();
-        try {
-            Runtime rt = Runtime.getRuntime();
-            Process proc = rt.exec("mount");
-            InputStream is = proc.getInputStream();
-            InputStreamReader isr = new InputStreamReader(is);
-            BufferedReader br = new BufferedReader(isr);
-            String line;
-            while ((line = br.readLine()) != null) {
-                if (line.contains("extSdCard")) {
-                    String[] arr = line.split(" ");
-                    String path = arr[1];
-                    File file = new File(path);
-                    if (file.isDirectory()) {
-                        lResult.add(path);
-                    }
-                }
-            }
-            isr.close();
-        } catch (Exception e) {
-        }
-        return lResult;
-    }
-
-    /**
-     * 判断文件是否存在，存在则在创建之前删除
-     *
-     * @param file 文件
-     * @return {@code true}: 创建成功<br>{@code false}: 创建失败
-     */
-    public static boolean createFileByDeleteOldFile(File file) {
-        if (file == null) return false;
-        // 文件存在并且删除失败返回false
-        if (file.exists() && file.isFile() && !file.delete()) return false;
-        // 创建目录失败返回false
-        if (!createOrExistsDir(file.getParentFile().getPath())) return false;
-        try {
-            return file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    /**
-     * 判断目录是否存在，不存在则判断是否创建成功
-     *
-     * @param dirPath 文件路径
-     * @return {@code true}: 存在或创建成功<br>{@code false}: 不存在或创建失败
-     */
-    public static boolean createOrExistsDir(String dirPath) {
-        return createOrExistsDir(getFileByPath(dirPath));
-    }
-
-    /**
-     * 判断目录是否存在，不存在则判断是否创建成功
-     *
-     * @param file 文件
-     * @return {@code true}: 存在或创建成功<br>{@code false}: 不存在或创建失败
-     */
-    public static boolean createOrExistsDir(File file) {
-        // 如果存在，是目录则返回true，是文件则返回false，不存在则返回是否创建成功
-        return file != null && (file.exists() ? file.isDirectory() : file.mkdirs());
-    }
-
-    /**
-     * 根据文件路径获取文件
-     *
-     * @param filePath 文件路径
-     * @return 文件
-     */
-    public static File getFileByPath(String filePath) {
-        return StringUtils.isSpace(filePath) ? null : new File(filePath);
-    }
-
-    public static boolean writeByteArrayToFile(byte[] bytes, String dirPath, String filename) {
-        FileUtils.createOrExistsDir(dirPath);
-        File file = new File(dirPath, filename);
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-            } catch (IOException e) {
-                Log.i("create file", "faild");
-                e.printStackTrace();
-            }
-        }
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(file);
-            fos.write(bytes);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            return false;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        } finally {
-            try {
-                fos.close();
-                return true;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
-            }
-        }
-    }
-
-    public static byte[] decodeFileToByteArray(String dirPath,String filename) {
+    public static byte[] toByteArray(String dirPath, String filename) throws FileNotFoundException {
 
         File f = new File(dirPath,filename);
         if (!f.exists()) {
-            Log.i(filename,"not exist");
+            throw new FileNotFoundException(filename);
+        }
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream((int) f.length());
+        BufferedInputStream in = null;
+        try {
+            in = new BufferedInputStream(new FileInputStream(f));
+            int buf_size = 1024;
+            byte[] buffer = new byte[buf_size];
+            int len = 0;
+            while (-1 != (len = in.read(buffer, 0, buf_size))) {
+                bos.write(buffer, 0, len);
+            }
+            return bos.toByteArray();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                bos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+
+    public static byte[] decodeFileToByteArray(String dirPath, String filename) {
+
+        File f = new File(dirPath, filename);
+        if (!f.exists()) {
+            Log.i(filename, "not exist");
         }
         ByteArrayOutputStream bos = new ByteArrayOutputStream((int) f.length());
         BufferedInputStream in = null;
@@ -332,4 +259,121 @@ public static final String SD_xj=SDCARD_PATH+"/xj_919";
     }
 
 
+    /**
+     * 打开文件
+     *
+     * @param file
+     */
+    public static void openFile(Context context, File file) {
+        Intent intent = new Intent();
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        //设置intent的Action属性
+        intent.setAction(Intent.ACTION_VIEW);
+        //获取文件file的MIME类型
+        String type = getMIMEType(file);
+        //设置intent的data和Type属性。
+        intent.setDataAndType(Uri.fromFile(file), type);
+        //跳转
+        context.startActivity(intent);
+        //这里最好try一下，有可能会报错。 //比如说你的MIME类型是打开邮箱，但是你手机里面没装邮箱客户端，就会报错。
+    }
+
+    /**
+     * 根据文件后缀名获得对应的MIME类型。
+     *
+     * @param file
+     */
+    private static String getMIMEType(File file) {
+
+        String type = "*/*";
+        String fName = file.getName();
+        //获取后缀名前的分隔符"."在fName中的位置。
+        int dotIndex = fName.lastIndexOf(".");
+        if (dotIndex < 0) {
+            return type;
+        }
+    /* 获取文件的后缀名*/
+        String end = fName.substring(dotIndex, fName.length()).toLowerCase();
+        if (end == "") return type;
+        //在MIME和文件类型的匹配表中找到对应的MIME类型。
+        for (int i = 0; i < MIME_MapTable.length; i++) {
+            if (end.equals(MIME_MapTable[i][0]))
+                type = MIME_MapTable[i][1];
+        }
+
+        return type;
+    }
+
+
+//MIME_MapTable是所有文件的后缀名所对应的MIME类型的一个String数组：
+
+    private static final String[][] MIME_MapTable = {
+            //{后缀名，MIME类型}
+            {".3gp", "video/3gpp"},
+            {".apk", "application/vnd.android.package-archive"},
+            {".asf", "video/x-ms-asf"},
+            {".avi", "video/x-msvideo"},
+            {".bin", "application/octet-stream"},
+            {".bmp", "image/bmp"},
+            {".c", "text/plain"},
+            {".class", "application/octet-stream"},
+            {".conf", "text/plain"},
+            {".cpp", "text/plain"},
+            {".doc", "application/msword"},
+            {".docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document"},
+            {".xls", "application/vnd.ms-excel"},
+            {".xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"},
+            {".exe", "application/octet-stream"},
+            {".gif", "image/gif"},
+            {".gtar", "application/x-gtar"},
+            {".gz", "application/x-gzip"},
+            {".h", "text/plain"},
+            {".htm", "text/html"},
+            {".html", "text/html"},
+            {".jar", "application/java-archive"},
+            {".java", "text/plain"},
+            {".jpeg", "image/jpeg"},
+            {".jpg", "image/jpeg"},
+            {".js", "application/x-javascript"},
+            {".log", "text/plain"},
+            {".m3u", "audio/x-mpegurl"},
+            {".m4a", "audio/mp4a-latm"},
+            {".m4b", "audio/mp4a-latm"},
+            {".m4p", "audio/mp4a-latm"},
+            {".m4u", "video/vnd.mpegurl"},
+            {".m4v", "video/x-m4v"},
+            {".mov", "video/quicktime"},
+            {".mp2", "audio/x-mpeg"},
+            {".mp3", "audio/x-mpeg"},
+            {".mp4", "video/mp4"},
+            {".mpc", "application/vnd.mpohun.certificate"},
+            {".mpe", "video/mpeg"},
+            {".mpeg", "video/mpeg"},
+            {".mpg", "video/mpeg"},
+            {".mpg4", "video/mp4"},
+            {".mpga", "audio/mpeg"},
+            {".msg", "application/vnd.ms-outlook"},
+            {".ogg", "audio/ogg"},
+            {".pdf", "application/pdf"},
+            {".png", "image/png"},
+            {".pps", "application/vnd.ms-powerpoint"},
+            {".ppt", "application/vnd.ms-powerpoint"},
+            {".pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation"},
+            {".prop", "text/plain"},
+            {".rc", "text/plain"},
+            {".rmvb", "audio/x-pn-realaudio"},
+            {".rtf", "application/rtf"},
+            {".sh", "text/plain"},
+            {".tar", "application/x-tar"},
+            {".tgz", "application/x-compressed"},
+            {".txt", "text/plain"},
+            {".wav", "audio/x-wav"},
+            {".wma", "audio/x-ms-wma"},
+            {".wmv", "audio/x-ms-wmv"},
+            {".wps", "application/vnd.ms-works"},
+            {".xml", "text/plain"},
+            {".z", "application/x-compress"},
+            {".zip", "application/x-zip-compressed"},
+            {"", "*/*"}
+    };
 }

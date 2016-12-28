@@ -1,3 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="simple4">#644b4b</color>
+    <color name="simple11">#644b4b</color>
+
+    <color name="simple1">#463231</color>
+    <color name="simple2">#1f232f</color>
+    <color name="simple3">#5c4235</color>
+    <color name="simple9">#754a39</color>
+
+    <color name="simple6_1">#1e1e28</color>
+
+    <color name="simple6_2">#a06e50</color>
+
+    <color name="simple8">#282828</color>
+
+    <color name="simple7">#3c465a</color>
 </resources>

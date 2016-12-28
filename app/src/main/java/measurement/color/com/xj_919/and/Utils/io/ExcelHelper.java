@@ -19,8 +19,7 @@ import jxl.write.WritableSheet;
 import jxl.write.WritableWorkbook;
 import jxl.write.WriteException;
 import jxl.write.biff.RowsExceededException;
-import measurement.color.com.xj_919.and.Utils.io.FileUtils;
-import measurement.color.com.xj_919.and.fragment.datahestroy.SimpleData;
+import measurement.color.com.xj_919.and.fragment.datahistory.SimpleData;
 
 /**
  * Created by wpc on 2016/10/22.
@@ -28,16 +27,15 @@ import measurement.color.com.xj_919.and.fragment.datahestroy.SimpleData;
 
 public class ExcelHelper {
 
-    public static final String ExcelOutPutPath = FileUtils.SDCARD_PATH + "/xj_919/file";
     public static final String[] title = {"编号", "日期", "时间", "结果", "备注"};
 
-    public enum Excel {
+    public enum ExcelOutPutType {
         jxl, poi
     }
 
 
-    public static boolean writeExcel(final ArrayList<SimpleData> Datas, String[] titles, String path, final String filename, Excel Type) {
-        if (Type == Excel.jxl) {
+    public static boolean writeExcel(final ArrayList<SimpleData> Datas, String[] titles, String path, final String filename, ExcelOutPutType Type) {
+        if (Type == ExcelOutPutType.jxl) {
             long start = System.currentTimeMillis();
             WritableWorkbook wwb = null;
             WritableSheet sheet = null;
@@ -51,7 +49,7 @@ public class ExcelHelper {
                     sheet.addCell(labelc);
                 }
                 for (int y = 0; y < Datas.size(); y++) {
-                    ArrayList<String> line = SimpleData.getArray(Datas.get(y));
+                    ArrayList<String> line = Datas.get(y).getArray();
                     for (int x = 0; x < line.size(); x++) {
                         Label label = new Label(x, y, line.get(x));
                         try {
@@ -112,7 +110,7 @@ public class ExcelHelper {
                             cell.setCellValue(titles[y]);
                         } else {
                             if (line == null) {
-                                line = SimpleData.getArray(Datas.get(x - 1));
+                                line = Datas.get(x - 1).getArray();
                             }
                             cell.setCellValue(line.get(y));
                         }

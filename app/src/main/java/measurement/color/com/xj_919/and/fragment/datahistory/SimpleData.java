@@ -87,14 +87,14 @@ public class SimpleData {
 //        return test;
 //    }
 
-    public static ArrayList<String> getArray(SimpleData data) {
+    public  ArrayList<String> getArray() {
 //        {"编号", "日期", "时间", "R1", "G1", "B1", "结果", "备注"};
         ArrayList<String> list = new ArrayList<>();
-        list.add(data.getId() + "");
-        list.add(data.getData());
-        list.add(data.getTime());
-        list.add(data.getResult());
-        list.add(data.getTips());
+        list.add(getId() + "");
+        list.add(getData());
+        list.add(getTime());
+        list.add(getResult());
+        list.add(getTips());
 
         return list;
     }

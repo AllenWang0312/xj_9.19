@@ -103,7 +103,7 @@ public class SettingFragment extends Fragment implements View.OnClickListener, S
         bet.setText(sharedPreferences.getInt(Consts.KEY_CENTER_BETWEEN, 0) + "");
         bet.setText(sharedPreferences.getInt(Consts.KEY_CENTER_R, 0) + "");
         sb1.setProgress(sharedPreferences.getInt(Consts.TakePhotoDelay, 180));
-        sb2.setProgress(sharedPreferences.getInt(Consts.LIGHT_HIGHT, 80));
+        sb2.setProgress(sharedPreferences.getInt(Consts.LIGHT_HIGHT, 20));
         sb3.setProgress(sharedPreferences.getInt(Consts.TakePhotoWait, 1));
         sw.setChecked(sharedPreferences.getBoolean(Consts.EXPOSURE,false));
     }

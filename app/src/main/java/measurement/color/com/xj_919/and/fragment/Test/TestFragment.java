@@ -9,15 +9,12 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -27,24 +24,22 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import measurement.color.com.xj_919.R;
 import measurement.color.com.xj_919.and.Utils.SP.Consts;
-import measurement.color.com.xj_919.and.Utils.io.FileOpenHelper;
-import measurement.color.com.xj_919.and.Utils.io.FileOpener.FileInfo;
-import measurement.color.com.xj_919.and.Utils.io.FileOpener.MyAdapter;
-import measurement.color.com.xj_919.and.Utils.io.FileUtils;
 import measurement.color.com.xj_919.and.Utils.SP.SharePreferenceHelper;
 import measurement.color.com.xj_919.and.Utils.hard.VibratorHelper;
-import measurement.color.com.xj_919.and.view.CustomViewPager;
+import measurement.color.com.xj_919.and.Utils.io.FileAndPath;
+import measurement.color.com.xj_919.and.Utils.io.FileOpener.FileInfo;
+import measurement.color.com.xj_919.and.Utils.io.FileUtils;
+import measurement.color.com.xj_919.and.adapter.ListAdapterForDiaplayFileList;
+import measurement.color.com.xj_919.and.adapter.PagerAdapterForTestGuide;
+import measurement.color.com.xj_919.and.adapter.RecycleAdapterForHistory;
 import measurement.color.com.xj_919.and.fragment.bluetooth.BlueToothManager;
-import measurement.color.com.xj_919.and.adapter.MyRecycleViewAdapter;
+import measurement.color.com.xj_919.and.view.CustomViewPager;
 
 import static measurement.color.com.xj_919.and.activity.app.cent_X;
 import static measurement.color.com.xj_919.and.activity.app.cent_Y;
@@ -65,8 +60,8 @@ public class TestFragment extends Fragment implements View.OnClickListener {
         return instance;
     }
 
-    String filePath = FileUtils.getSDcardPath() + "/xj_919/img/";
-    String fileName;
+//    String filePath = FileAndPath.getSDcardPath() + "/xj_919/img/";
+//    String fileName;
 
     View view;
     CustomViewPager vp;
@@ -82,6 +77,8 @@ public class TestFragment extends Fragment implements View.OnClickListener {
     private static final int DISMISS_DIALOG = 9;
     private static final int START_ASY_TASK = 10;
     private static final int TEST_FINISH = 11;
+    private static final int TEST_REFESH = 12;
+    private static final int SET_PROGRESS=13;
 
     private BlueToothManager mBlueToothManager;
     private Activity context;
@@ -90,23 +87,19 @@ public class TestFragment extends Fragment implements View.OnClickListener {
     ProgressDialog dialog;
     private SharedPreferences mSharedPreferences;
 
-    MyPagerAdapter adapter;
+    PagerAdapterForTestGuide adapter;
     ArrayList<String> datas;
 
-    private MyRecycleViewAdapter.OnItemClickLitener mOnItemClickLitener;
+    private RecycleAdapterForHistory.OnItemClickLitener mOnItemClickLitener;
     private TextView center, between, r;
     private Button lift, right, top, bottom, bet_del, bet_add, r_del, r_add;
     ListView lv;
 
     private static Button bt, bt_save, bt_print;
-    private static CheckBox cb;
-    CheckBox cb_loc;
+    private CheckBox cb, position_selecter;
     private EditText et_tips;
     private ImageView mImageView;
-
-    List<View> pagers = new ArrayList<View>();
-    int[] ImgIds = {R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.mipmap.ic_launcher};
-    String[] tips = {"1", "2", "3", "4"};
+    Timer timer = new Timer();
 
     private Handler handler = new Handler() {
         @Override
@@ -128,10 +121,17 @@ public class TestFragment extends Fragment implements View.OnClickListener {
                     bt_save.setVisibility(View.GONE);
                     break;
                 case START_ASY_TASK:
-                    new MyTask(cb.isChecked(), cb_loc.isChecked(), msg.arg1).execute();
+                    new MyTask(cb.isChecked(), msg.arg2, msg.arg1).execute();
                     break;
-                case TEST_FINISH:
-                    adapter.onFinish(datas);
+//                case TEST_FINISH:
+//                    adapter.onFinish(datas);
+//                    datas=new ArrayList<>();
+//                    break;
+                case TEST_REFESH:
+                    adapter.onRefesh(resultData);
+                    break;
+                case SET_PROGRESS:
+                    adapter.setProgress(msg.arg1, msg.arg2);
                     break;
             }
         }
@@ -141,14 +141,13 @@ public class TestFragment extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, final ViewGroup container, Bundle savedInstanceState) {
         context = getActivity();
-
         view = inflater.inflate(R.layout.usb_fragment, container, false);
 //        PhoneUtils.isUsbHostEnable(context);
         initData();
         findView();
         setListener();
 
-        mOnItemClickLitener = new MyRecycleViewAdapter.OnItemClickLitener() {
+        mOnItemClickLitener = new RecycleAdapterForHistory.OnItemClickLitener() {
             @Override
             public void onItemClick(View view, int position) {
                 Log.i("item", "click");
@@ -173,6 +172,17 @@ public class TestFragment extends Fragment implements View.OnClickListener {
     int pagerindex = 0;
 
     private void findView() {
+        view.findViewById(R.id.bblr_test).setOnClickListener(this);
+
+        view.findViewById(R.id.bt_turn_down_light).setOnClickListener(this);
+//        view.findViewById(R.id.set_test).setOnClickListener(this);
+        bt = (Button) view.findViewById(R.id.bt_usb);
+        bt_save = (Button) view.findViewById(R.id.bt_save_usb);
+        cb = (CheckBox) view.findViewById(R.id.cb_usb);
+        bt_print = (Button) view.findViewById(R.id.bt_print_usb);
+
+        position_selecter = (CheckBox) view.findViewById(R.id.cb_use_under_position);
+
         mImageView = (ImageView) view.findViewById(R.id.iv_usb_fragment);
         et_tips = (EditText) view.findViewById(R.id.et_tips_usb);
 
@@ -190,13 +200,12 @@ public class TestFragment extends Fragment implements View.OnClickListener {
         bet_add = (Button) view.findViewById(R.id.bt_bew_up);
         r_del = (Button) view.findViewById(R.id.bt_r_down);
         r_add = (Button) view.findViewById(R.id.bt_r_up);
-        cb_loc = (CheckBox) view.findViewById(R.id.cb_loc_test);
         vp = (CustomViewPager) view.findViewById(R.id.vp_test);
         last = (Button) view.findViewById(R.id.bt_last_test);
         next = (Button) view.findViewById(R.id.bt_next_test);
         skep = (Button) view.findViewById(R.id.bt_skep_test);
-        final ArrayList<FileInfo> fileInfos = FileUtils.getFileInfoListWithDirPathAndEnd(FileUtils.IMG_NATIVE_DATA, ".cache");
-        lv.setAdapter(new MyAdapter(fileInfos, context));
+        final ArrayList<FileInfo> fileInfos = FileUtils.getFileInfoListWithDirPathAndEnd(FileAndPath.IMG_NATIVE_DATA, ".cache");
+        lv.setAdapter(new ListAdapterForDiaplayFileList(fileInfos, context));
         lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -204,20 +213,23 @@ public class TestFragment extends Fragment implements View.OnClickListener {
                 Log.i("byte arr length", arr.length + "");
             }
         });
-        adapter = new MyPagerAdapter();
+        adapter = new PagerAdapterForTestGuide(context);
         vp.setAdapter(adapter);
+        vp.setCurrentItem(0);
         vp.setOffscreenPageLimit(5);
         vp.setPagingEnabled(false);
         vp.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
             }
 
             @Override
             public void onPageSelected(int position) {
                 pagerindex = position;
                 if (pagerindex == 4) {
-                    skep.setText("测试");
+                    skep.setText("开始测试");
+                    adapter.setProgress(mSharedPreferences.getInt(Consts.TakePhotoTimes, 1), 0);
                     if (cb.isChecked()) {
                         handler.sendEmptyMessage(SAVE_STATE_GONE);
                     } else {
@@ -243,16 +255,13 @@ public class TestFragment extends Fragment implements View.OnClickListener {
 
             @Override
             public void onPageScrollStateChanged(int state) {
+
             }
         });
-        bt = (Button) view.findViewById(R.id.bt_usb);
-        bt_save = (Button) view.findViewById(R.id.bt_save_usb);
-        cb = (CheckBox) view.findViewById(R.id.cb_usb);
-        bt_print = (Button) view.findViewById(R.id.bt_print_usb);
     }
 
-    private void test() {
-
+    //testMod 2下位机固定位置校准 1位置调整校准  0正常测试  -1白板录入
+    private void test(final int testMod, final int times) {
         Log.i("state", mUSBManager.getState() + "");
         switch (mUSBManager.getState()) {
             default:
@@ -261,9 +270,8 @@ public class TestFragment extends Fragment implements View.OnClickListener {
                     break;
                 }
             case 3:
-//                adapter.init(true);
-                final Timer timer = new Timer();
-                final int times = cb_loc.isChecked() ? 1 : mSharedPreferences.getInt(Consts.TakePhotoTimes, 1);
+                adapter.setProgress(null, 0);
+                timer = new Timer();
                 timer.schedule(new TimerTask() {
                     int time = 0;
 
@@ -274,21 +282,24 @@ public class TestFragment extends Fragment implements View.OnClickListener {
                         Message message = new Message();
                         message.what = START_ASY_TASK;
                         message.arg1 = time;
+                        message.arg2 = testMod;
                         handler.sendMessage(message);
 
                         if (time == times) {
-                            time = 0;
                             timer.cancel();
                         }
                     }
                 }, 0, 1000 * (mSharedPreferences.getInt(Consts.TakePhotoWait, 1) + 3));
+//                if (!fixPox) {
+//                    bt_print.setVisibility(View.VISIBLE);
+//                }
                 break;
         }
     }
 
     private void setListener() {
 
-        mImageView.setOnClickListener(this);
+//        mImageView.setOnClickListener(this);
         lift.setOnClickListener(this);
         right.setOnClickListener(this);
         top.setOnClickListener(this);
@@ -326,7 +337,6 @@ public class TestFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-
         cent_X = mSharedPreferences.getInt(Consts.KEY_CENTER_X, 320);
         cent_Y = mSharedPreferences.getInt(Consts.KEY_CENTER_Y, 240);
         cent_bet = mSharedPreferences.getInt(Consts.KEY_CENTER_BETWEEN, 145);
@@ -342,29 +352,43 @@ public class TestFragment extends Fragment implements View.OnClickListener {
             view.findViewById(R.id.cv1_test).setVisibility(View.GONE);
             view.findViewById(R.id.cv2_test).setVisibility(View.GONE);
         }
-//        center.setText("(" + cent_X + "," + cent_Y + ")");
-//        between.setText(cent_bet + "");
-//        r.setText(round_r + "");
     }
 
 
     @Override
     public void onClick(View v) {
         int id = v.getId();
+
         switch (id) {
-            case R.id.iv_usb_fragment:
-                if (filePath == null || fileName == null) {
-                    break;
-                } else {
-                    FileOpenHelper.openFile(context, new File(filePath, fileName));
+//            case R.id.iv_usb_fragment:
+//                if (filePath == null || fileName == null) {
+//                    break;
+//                } else {
+//                    FileUtils.openFile(context, new File(filePath, fileName));
+//                }
+//                break;
+//            case R.id.set_test:
+//               initConfig();
+//                break;
+            case R.id.bt_turn_down_light:
+                if (mUSBManager.TransceiverInstance != null) {
+                    mUSBManager.TransceiverInstance.sendTurnDownRequest();
                 }
                 break;
             case R.id.bt_usb:
-                test();
+                if (position_selecter.isChecked()) {
+                    test(2, 1);
+                } else {
+                    test(1, 1);
+                }
+
+                break;
+            case R.id.bblr_test:
+                test(-1, 1);
                 break;
             case R.id.bt_save_usb:
                 if (mUSBManager.TransceiverInstance != null) {
-                    mUSBManager.TransceiverInstance.saveData(et_tips.getText().toString(), true);
+                    mUSBManager.TransceiverInstance.saveData(0, et_tips.getText().toString(), true, resultData);
                 } else {
                     Toast.makeText(context, "请先测试样品", Toast.LENGTH_SHORT).show();
                 }
@@ -372,15 +396,17 @@ public class TestFragment extends Fragment implements View.OnClickListener {
             case R.id.bt_print_usb:
 //                Log.i("bt_print_usb", "click printable=" + String.valueOf(mUSBManager.printable));
                 if (mUSBManager.printable) {
-                    if (mBlueToothManager.mBlueToothPrinter != null) {
-                        try {
-                            mBlueToothManager.mBlueToothPrinter.printArray(getPrintStringArray());
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    } else {
-                        Toast.makeText(context, "请先连接蓝牙打印设备", Toast.LENGTH_SHORT).show();
-                    }
+
+//                    if (mBlueToothManager.mBlueToothPrinter != null) {
+//                        try {
+//                            mBlueToothManager.mBlueToothPrinter.printArray(getPrintStringArray());
+//                        } catch (IOException e) {
+//                            e.printStackTrace();
+//                        }
+//                    } else {
+//                        Toast.makeText(context, "请先连接蓝牙打印设备", Toast.LENGTH_SHORT).show();
+//                    }
+
                 } else {
                     Toast.makeText(context, "请先测试样品", Toast.LENGTH_SHORT).show();
                 }
@@ -431,7 +457,10 @@ public class TestFragment extends Fragment implements View.OnClickListener {
                 break;
             case R.id.bt_skep_test:
                 if (pagerindex == 4) {
-                    test();
+                    bt_print.setVisibility(View.GONE);
+                    adapter.CleanListView();
+                    test(0, mSharedPreferences.getInt(Consts.TakePhotoTimes, 1));
+                    adapter.setProgress(mSharedPreferences.getInt(Consts.TakePhotoTimes, 1), 0);
                 } else {
                     vp.setCurrentItem(4, true);
                 }
@@ -439,8 +468,12 @@ public class TestFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    private void stopTest() {
+    private void initConfig() {
+        if (mUSBManager.init()) {
+//            if (mUSBManager.TransceiverInstance.checkPermission()) {
 
+//            }
+        }
     }
 
     private void setText(int id) {
@@ -457,12 +490,6 @@ public class TestFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    ArrayList<String> getPrintStringArray() {
-        ArrayList<String> list = new ArrayList<>();
-        list.add("title text");
-        return list;
-    }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -471,7 +498,6 @@ public class TestFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        mUSBManager.unregisterReceiver();
     }
 
     public static void setButton(String str, boolean b) {
@@ -482,163 +508,181 @@ public class TestFragment extends Fragment implements View.OnClickListener {
 
     boolean busy = false;
 
-    private class MyTask extends AsyncTask<String, Integer, Integer> {
 
+    ArrayList<ArrayList<ResultData>> resultData;
+
+    private class MyTask extends AsyncTask<String, Integer, Integer> {
+//1 成功 0 数据不可用  -1连接不可用  -2没有白板
+        int resultful;
         boolean save;
-        boolean fixPos;
-        int time;
-        ArrayList<ArrayList<USBManager.ResultData>> judge;
+        int test_mod;
+        int times;
         String tips;
 
-        MyTask(boolean save, boolean fixPosition, int time) {
+        MyTask(boolean save, int testMod, int time) {
             this.save = save;
-            fixPos = fixPosition;
-            this.time = time;
+            test_mod = testMod;
+            this.times = time;
         }
 
         //onPreExecute方法用于在执行后台任务前做一些UI操作
         @Override
         protected void onPreExecute() {
-            adapter.initState(0);
             tips = et_tips.getText().toString();
-            if (dialog == null) {
+            if (times == 1) {
                 dialog = new ProgressDialog(context);
                 dialog.setCancelable(false);
-//            int flags
-//            各种锁的类型对CPU 、屏幕、键盘的影响：
-//            PARTIAL_WAKE_LOCK :保持CPU 运转，屏幕和键盘灯有可能是关闭的。
-//            SCREEN_DIM_WAKE_LOCK ：保持CPU 运转，允许保持屏幕显示但有可能是灰的，允许关闭键盘灯
-//            SCREEN_BRIGHT_WAKE_LOCK ：保持CPU 运转，允许保持屏幕高亮显示，允许关闭键盘灯
-//            FULL_WAKE_LOCK ：保持CPU 运转，保持屏幕高亮显示，键盘灯也保持亮度
-                dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-            }
-            if (!dialog.isShowing()) {
-                dialog.setMessage("第" + time + "次取样...");
                 dialog.show();
             }
+            dialog.setMessage("测试中["+times+"]...");
+//            if (dialog == null) {
+//                dialog = new ProgressDialog(context);
+//                dialog.setCancelable(false);
+////            int flags
+////            各种锁的类型对CPU 、屏幕、键盘的影响：
+////            PARTIAL_WAKE_LOCK :保持CPU 运转，屏幕和键盘灯有可能是关闭的。
+////            SCREEN_DIM_WAKE_LOCK ：保持CPU 运转，允许保持屏幕显示但有可能是灰的，允许关闭键盘灯
+////            SCREEN_BRIGHT_WAKE_LOCK ：保持CPU 运转，允许保持屏幕高亮显示，允许关闭键盘灯
+////            FULL_WAKE_LOCK ：保持CPU 运转，保持屏幕高亮显示，键盘灯也保持亮度
+//                dialog.getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+//            }
+//            if (!dialog.isShowing()) {
+//                dialog.setMessage("第" + times + "次取样...");
+//                dialog.show();
+//            }
         }
 
         //doInBackground方法内部执行后台任务,不可在此方法内修改UI
         @Override
         protected Integer doInBackground(String... params) {
+
             busy = true;
             if (mUSBManager != null) {
-                mUSBManager.TransceiverInstance.sendTakePhotoRequest((byte) 0x00, mSharedPreferences.getInt(Consts.TakePhotoDelay, 190));
-//                mUSBManager.TransceiverInstance.initData();
-                mUSBManager.TransceiverInstance.LoadDate(fixPos, mSharedPreferences.getInt(Consts.LIGHT_HIGHT, 240));
-                if (!fixPos) {
-                    judge = mUSBManager.TransceiverInstance.Judge();
-                    if (save) {
-                        mUSBManager.TransceiverInstance.saveData(tips, true);
-                        hasSaved = true;
+//                mUSBManager.TransceiverInstance.checkPermission();
+                if (test_mod != 1) {
+                    if (Config.getInstance().getSettings() == null) {
+                        Config.getInstance().initSettings(mUSBManager.TransceiverInstance.sendTakeConfigRequest());
                     }
                 }
+                if (mUSBManager.TransceiverInstance.sendTakePhotoRequest((byte) 0x00, mSharedPreferences.getInt(Consts.TakePhotoDelay,SharePreferenceHelper.getInstance().getInt(Consts.TakePhotoDelay,180)))) {//190
+                    //                mUSBManager.TransceiverInstance.initData();
+                    resultful = mUSBManager.TransceiverInstance.LoadDate(test_mod, mSharedPreferences.getInt(Consts.LIGHT_HIGHT, 20) * 10);
+                    if (resultful==1) {
+                        if (test_mod == 0) {
+                            resultData = mUSBManager.TransceiverInstance.checkData();
+                            Log.i("result",resultData.toString());
+                            if (save) {
+                                mUSBManager.TransceiverInstance.saveData(0, tips, true, resultData);
+                                hasSaved = true;
+                            }
+                            notifityUser(resultData);
+                        } else if (test_mod == -1) {
+                            mUSBManager.TransceiverInstance.saveData(-1, null, null, null);
+                        }
+                    }
+                } else {
+                    resultful=-1;
+//                    Toast.makeText(context, "连接错误", Toast.LENGTH_SHORT).show();
+//                    Message m=new Message();
+//                    m.arg1=0;m.arg2=-3;
+//                    handler.sendMessage(m);
+                    dialog.cancel();
+                    timer.cancel();
+                }
+
+
             } else {
                 Toast.makeText(context, "连接错误", Toast.LENGTH_SHORT).show();
             }
             return null;
         }
 
+        private void notifityUser(ArrayList<ArrayList<ResultData>> resultData) {
+            boolean hasFound = false;
+            for (int i = 0; i < resultData.size(); i++) {
+                for (int j = 0; j < resultData.get(i).size(); j++) {
+                    if (resultData.get(i).get(j).isHasfound()) {
+                        hasFound = true;
+                        break;
+                    }
+                }
+            }
+            mUSBManager.TransceiverInstance.sendNotifyUserRequest(hasFound);
+        }
+
         //onPostExecute方法用于在执行完后台任务后更新UI,显示结果
         @Override
         protected void onPostExecute(Integer result) {
-            mImageView.setImageBitmap(mUSBManager.bitmap);
-            if (fixPos) {
-                saveChange();
-            } else {
-                datas = getResultReport(judge);
-                if (time == mSharedPreferences.getInt(Consts.TakePhotoTimes, 1)) {
-                    adapter.initState(1);
-                    VibratorHelper.getInstance(context).vibrate(new long[]{100, 100, 100, 100}, -1);
-                }
+            if (resultful!=1) {
+                dialog.cancel();
+                adapter.setProgress(null, resultful-2);
+                timer.cancel();
+//                Toast.makeText(context, "请正确放置被测物位置", Toast.LENGTH_SHORT).show();
+            }else if(resultful==-2){
+                dialog.cancel();
+                adapter.setProgress(null, resultful-2);
+                timer.cancel();
             }
+            else {
+                mImageView.setImageBitmap(mUSBManager.bitmap);
+                adapter.setProgress(null, times);
+                if (test_mod == 1) {
+                    saveChange();
+                    dialog.cancel();
+                } else if (test_mod == 0) {
+//                   getResultReport(judge);
+                    if (times == mSharedPreferences.getInt(Consts.TakePhotoTimes, 1)) {
+                        if (VibratorHelper.isOpen()) {
+                            VibratorHelper.getInstance(context).vibrate(new long[]{100, 100, 100, 100}, -1);
+                        }
+                        dialog.cancel();
+                    }
+                } else {
+                    dialog.cancel();
+                }
 //            handler.sendEmptyMessage(USB_STATE_TAKEPHOTO)  handler.sendEmptyMessage(TEST_FINISH);;
-            mUSBManager.TransceiverInstance.arr = new int[(mUSBManager.TransceiverInstance.length - 1) * (mUSBManager.TransceiverInstance.height - 1)];
-            busy = false;
+                mUSBManager.TransceiverInstance.arr = new int[(mUSBManager.TransceiverInstance.length - 1) * (mUSBManager.TransceiverInstance.height - 1)];
+                busy = false;
 //            mUSBManager.TransceiverInstance.arr = new int[(mUSBManager.TransceiverInstance.length / 2) * (mUSBManager.TransceiverInstance.height / 2)];
 //            mUSBManager.bitmap.recycle();
-            dialog.cancel();
-            handler.sendEmptyMessage(TEST_FINISH);
-        }
-    }
+                if (test_mod == 0) {
+                    handler.sendEmptyMessage(TEST_REFESH);
+                }
 
-
-    class MyPagerAdapter extends PagerAdapter {
-
-        LayoutInflater inflater;
-        ListView result;
-        TextView tv;
-
-        MyPagerAdapter() {
-            inflater = LayoutInflater.from(context);
-        }
-
-        @Override
-        public Object instantiateItem(ViewGroup container, int position) {
-            View v;
-            if (position != ImgIds.length) {
-                v = inflater.inflate(R.layout.item_vp_test, null);
-            } else {
-                v = inflater.inflate(R.layout.enditem_vp_test, null);
-                result = (ListView) v.findViewById(R.id.lv_result_test);
-                tv = (TextView) v.findViewById(R.id.testing_test);
-            }
-            container.addView(v);
-            pagers.add(v);
-            return v;
-        }
-
-        @Override
-        public void destroyItem(ViewGroup container, int position, Object object) {
-            container.removeView(pagers.get(position));
-        }
-
-        @Override
-        public int getCount() {
-            return ImgIds.length + 1;
-        }
-
-        @Override
-        public boolean isViewFromObject(View view, Object object) {
-            return view == object;
-        }
-
-        //-1 点击检测 0 正在检测 1 检测完成
-        public void initState(int state) {
-            if (state == -1) {
-                tv.setText("点击测试,开始检测");
-            } else if (state == 0) {
-                tv.setText("正在检测...");
-            } else if (state == 1) {
-                tv.setText("检测完成");
-            }
-
-        }
-
-        public void onFinish(ArrayList<String> datas) {
-            if (datas != null) {
-                result.setAdapter(new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, datas));
+//                if (times != mSharedPreferences.getInt(Consts.TakePhotoTimes, 1)) {
+//
+//                } else {
+////                    handler.sendEmptyMessage(TEST_FINISH);
+//                    adapter.setProgress(null, times);
+//                    mUSBManager.printable = true;
+//                }
             }
         }
     }
 
+    /**
+     * 根据6个区域返回数据的集合得出报告list
+     *
+     * @param judge
+     * @return
+     */
 
-    private ArrayList<String> getResultReport(ArrayList<ArrayList<USBManager.ResultData>> judge) {
+    private ArrayList<String> getResultReport(ArrayList<ArrayList<ResultData>> judge) {
         ArrayList<String> results = new ArrayList<>();
         for (int i = 0; i < judge.size(); i++) {
-            ArrayList<USBManager.ResultData> datas = judge.get(i);
+            ArrayList<ResultData> datas = judge.get(i);
             for (int j = 0; j < datas.size(); j++) {
                 if (datas.get(j).hasfound) {
                     results.add(datas.get(j).toString());
                 }
             }
         }
-        if (results.size() == 0) {
-            results.add("没有检测到危险物品");
-        }
         return results;
     }
 
+    /**
+     * 将当前位置参数存入sharedpreference
+     */
     private void saveChange() {
         SharedPreferences.Editor editor = mSharedPreferences.edit();
         editor.putInt(Consts.KEY_CENTER_X, cent_X);

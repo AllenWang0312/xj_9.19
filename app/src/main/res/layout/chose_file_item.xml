@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <TextView  android:textColor="?attr/textColor"
+        android:id="@+id/filename_chosefiledialogitem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="18dp"
+        android:layout_marginTop="6dp"
+        android:text="filename" />
+
+    <TextView  android:textColor="?attr/textColor"
+        android:id="@+id/secondinfo_chosefiledialogitem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/filename_chosefiledialogitem"
+        android:layout_alignBottom="@+id/filename_chosefiledialogitem"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="18dp" 
+        android:textSize="10sp"
+        />
+
+    <TextView
+        android:id="@+id/dirpath_chosefiledialogitem"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/filename_chosefiledialogitem"
+        android:layout_below="@+id/filename_chosefiledialogitem"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="6dp"
+        android:textSize="10sp"
+        android:textColor="@color/secondaryText"
+        android:text="dirPath" />
+
+</RelativeLayout>

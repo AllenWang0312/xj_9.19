@@ -26,23 +26,21 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 
 import measurement.color.com.xj_919.R;
 import measurement.color.com.xj_919.and.Utils.DB.MyDBHelper;
-import measurement.color.com.xj_919.and.Utils.SP.Consts;
+import measurement.color.com.xj_919.and.Utils.T;
 import measurement.color.com.xj_919.and.Utils.io.ExcelHelper;
+import measurement.color.com.xj_919.and.Utils.io.FileAndPath;
 import measurement.color.com.xj_919.and.Utils.io.FileOpener.ChoseFileDialog;
 import measurement.color.com.xj_919.and.Utils.io.FileOpener.FileInfo;
 import measurement.color.com.xj_919.and.Utils.io.FileUtils;
-import measurement.color.com.xj_919.and.Utils.T;
 import measurement.color.com.xj_919.and.activity.app;
 import measurement.color.com.xj_919.and.adapter.RecycleAdapterForHistory;
-import measurement.color.com.xj_919.and.fragment.bluetooth.BlueToothManager;
+import measurement.color.com.xj_919.and.fragment.Test.USBManager;
 import measurement.color.com.xj_919.and.view.Divider.DividerItemDecoration;
-
-import static android.content.Context.MODE_PRIVATE;
 
 /**
  * Created by wpc on 2016/9/30.
@@ -61,10 +59,10 @@ public class DataHistory extends Fragment implements View.OnClickListener {
 
     public static SelectDialog.selectData selectdata = null;
     private Context context;
-    private BlueToothManager mBlueToothManager;
+    //    private BlueToothManager mBlueToothManager;
     private RecycleAdapterForHistory.OnItemClickLitener mOnItemClickLitener;
     private View view;
-    private static CheckBox v_top;
+    private CheckBox v_top;
     private boolean selectAll = false;
     private SwipeRefreshLayout srl;
 
@@ -82,9 +80,21 @@ public class DataHistory extends Fragment implements View.OnClickListener {
             super.handleMessage(msg);
             switch (msg.what) {
                 case 0:
+//                    if(mData!=null&&mData.size()!=0){
+                    adapter = new RecycleAdapterForHistory(context, mData, app.CheckState);
+                    adapter.setOnItemClickLitener(mOnItemClickLitener);
+                    rv.setAdapter(adapter);
+//                    }
+                    break;
+                case 1:
+                    selectAll = true;
                     refreshCheckState(selectAll);
-                    setAdatper();
-//        rv.addItemDecoration(new DividerGridItemDecoration(context));
+                    refreshData();
+                    break;
+                case 2:
+                    selectAll = false;
+                    refreshCheckState(selectAll);
+                    refreshData();
                     break;
             }
         }
@@ -95,11 +105,16 @@ public class DataHistory extends Fragment implements View.OnClickListener {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable final ViewGroup container, @Nullable Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.datahestroy_fragment, container, false);
-        mData = new ArrayList<>();
         context = getActivity();
+        dbHelper = new MyDBHelper(context, app.SQLite_LOG, null, 1);
+        db = dbHelper.getWritableDatabase();
+
+        mData = new ArrayList<>();
+
         findViewAndSetActions();
-        mBlueToothManager = BlueToothManager.getInstance(getActivity(), print);
-        refresh();
+//        mBlueToothManager = BlueToothManager.getInstance(getActivity(), print);
+        refreshData();
+        refreshCheckState(selectAll);
         return view;
     }
 
@@ -108,7 +123,8 @@ public class DataHistory extends Fragment implements View.OnClickListener {
         srl.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                refresh();
+                refreshData();
+                refreshCheckState(selectAll);
                 srl.setRefreshing(false);
             }
         });
@@ -116,12 +132,10 @@ public class DataHistory extends Fragment implements View.OnClickListener {
         v_top.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (v_top.isChecked()) {
-                    selectAll = true;
-                    refresh();
+                if (isChecked) {
+                    mHandler.sendEmptyMessage(1);
                 } else {
-                    selectAll = false;
-                    refresh();
+                    mHandler.sendEmptyMessage(2);
                 }
             }
         });
@@ -138,7 +152,7 @@ public class DataHistory extends Fragment implements View.OnClickListener {
         //        rv.setLayoutManager(layout);
         //        rv.setAdapter(adapter);
         rv.setItemAnimator(new DefaultItemAnimator());
-
+        rv.setHasFixedSize(true);
         rv.addItemDecoration(new DividerItemDecoration(
                 getActivity(), DividerItemDecoration.HORIZONTAL_LIST));
 
@@ -149,7 +163,6 @@ public class DataHistory extends Fragment implements View.OnClickListener {
                 if (app.showCheckBoxs) {
                     if (justdelete) {
                         mHandler.sendEmptyMessage(0);
-//                        adapter.notifyDataSetChanged();
                     }
                     justdelete = false;
                     if (app.CheckState.get(position)) {
@@ -163,7 +176,6 @@ public class DataHistory extends Fragment implements View.OnClickListener {
                     int id = mData.get(position).getId();
                     new DetialDialog(getActivity(), db, id).show(getActivity().getFragmentManager(), "DetialDialog");
                     Log.i("detial", "show");
-                    /////
                 }
             }
 
@@ -181,6 +193,8 @@ public class DataHistory extends Fragment implements View.OnClickListener {
     ArrayList<FileInfo> files;
     ChoseFileDialog choseFileDialog;
 
+    long lastClick ;
+
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -191,30 +205,31 @@ public class DataHistory extends Fragment implements View.OnClickListener {
                     @Override
                     public void onClick(final DialogInterface dialog, int which) {
                         if (which == 0) {
-                            FileUtils.createOrExistsDir(FileUtils.Excel);
+                            FileAndPath.createOrExistsDir(FileAndPath.Excel);
                             int size = mData.size();
                             if (size != 0) {
                                 String filename = mData.get(0).getId() + "_" + mData.get(size - 1).getId();
-                                if (new File(FileUtils.Excel, filename + ".xls").exists()) {
-                                    T.show(context, "文件已存在请勿重复创建");
+                                if (new File(FileAndPath.Excel, filename + ".xls").exists()) {
+                                    T.showInTop(context, "文件已存在请勿重复创建");
                                 } else {
-                                    if (ExcelHelper.writeExcel(mData, ExcelHelper.title, FileUtils.Excel, filename, ExcelHelper.Excel.poi)) {
-                                        T.show(context, "导出成功" + FileUtils.Excel + "/" + filename + ".xls");
+                                    if (ExcelHelper.writeExcel(mData, ExcelHelper.title, FileAndPath.Excel, filename, ExcelHelper.ExcelOutPutType.poi)) {
+                                        T.showInTop(context, "导出成功" + FileAndPath.Excel + "/" + filename + ".xls");
                                     }
                                 }
                             } else {
-                                T.show(context, "没有数据");
+                                T.showInTop(context, "没有数据");
                             }
 
                         } else {
-                            files = FileUtils.getFileInfoListWithDirPathAndEnd(FileUtils.Excel, ".xls");
+                            files = FileUtils.getFileInfoListWithDirPathAndEnd(FileAndPath.Excel, ".xls");
                             if (files.size() != 0) {
                                 choseFileDialog = new ChoseFileDialog((Activity) context, files, new AdapterView.OnItemClickListener() {
                                     @Override
                                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                                         FileInfo select = files.get(position);
                                         String abs = select.getDirPath() + "/" + select.getName();
-                                        FileUtils.playFileWithSystemSeveice((Activity) context, abs);
+                                        FileUtils.openFile(context, new File(abs));
+//                                        FileUtils.playFileWithSystemSeveice((Activity) context, abs);
                                     }
                                 }, new AdapterView.OnItemLongClickListener() {
                                     @Override
@@ -228,7 +243,7 @@ public class DataHistory extends Fragment implements View.OnClickListener {
                                         builder1.setPositiveButton("确定", new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
-                                                if (FileUtils.deleteFileIfExist(abs)) {
+                                                if (FileUtils.deleteFile(abs)) {
 //                                                files = FileUtils.getFileInfoListWithDirPathAndEnd(FileUtils.EXCEL_OUTPUT_PATH, ".xls");
                                                     T.show(context, "删除成功");
                                                 }
@@ -241,7 +256,7 @@ public class DataHistory extends Fragment implements View.OnClickListener {
                                 });
                                 choseFileDialog.show(((Activity) context).getFragmentManager(), "chosefiledialog");
                             } else {
-                                T.show(context, "没有该类型的文件");
+                                T.showInTop(context, "没有该类型的文件");
                             }
 
                         }
@@ -251,6 +266,7 @@ public class DataHistory extends Fragment implements View.OnClickListener {
                 builder.create().show();
 
                 break;
+
 //            case R.id.printfile_hestroy:
 // 勿删
 //        printfile.setOnClickListener(new View.OnClickListener() {
@@ -325,31 +341,45 @@ public class DataHistory extends Fragment implements View.OnClickListener {
                 if (mData.size() != 0) {
                     new SelectDialog(context, DataHistory.this).show(getActivity().getFragmentManager(), "selectdialog");
                 } else {
-                    T.show(context, "没有数据");
+                    T.showInTop(context, "没有数据");
                 }
-
                 break;
             case R.id.blue_print_hestroy:
 
-                if (getCheckedNum(app.CheckState) != 0) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            int index = 1;
-                            for (boolean b : app.CheckState) {
-                                if (b) {
-                                    int id = mData.get(index - 1).getId();
+                if (!USBManager.getInstance(getActivity()).isHasInit()) {
+                    if (!USBManager.getInstance(getActivity()).init()) {
+                        Log.i("print_hestroy", "usbManager init faild");
+                        break;
+                    }
+                }
+                if (app.CheckState != null && getCheckedNum(app.CheckState) != 0) {
+
+                    if (System.currentTimeMillis() - lastClick <= 2000)
+                    {
+                        T.showInTop(context,"正在打印");
+                        return;
+                    }else {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                int index = 1;
+                                for (boolean b : app.CheckState) {
+                                    if (b) {
+                                        int id = mData.get(index - 1).getId();
 //                                    mBlueToothManager.print(print);
 //                                            printWithBL(id);
-                                    printWithUSB(id);
+                                        if (USBManager.getInstance(getActivity()).TransceiverInstance.checkPermission()) {
+                                            USBManager.getInstance(getActivity()).TransceiverInstance.printStringWithUSB(id);
+                                        }
+                                    }
+                                    index++;
                                 }
-                                index++;
                             }
-                        }
-                    }).start();
-
+                        }).start();
+                    }
+                    lastClick = System.currentTimeMillis();
                 } else {
-                    T.show(context, "长按勾选需要打印的数据");
+                    T.showInTop(context, "请勾选需要打印的数据");
                 }
 //                switch (connectState) {
 //                    case 10:
@@ -386,11 +416,11 @@ public class DataHistory extends Fragment implements View.OnClickListener {
                 break;
             case R.id.delete_hestroy:
                 if (justdelete) {
-                    T.show(context, "请选择数据");
+                    T.showInTop(context, "请选择数据");
                     break;
                 }
                 if (!app.showCheckBoxs) {
-                    T.show(context, "请选择数据");
+                    T.showInTop(context, "请选择数据");
                     break;
                 }
                 if (getCheckedNum(app.CheckState) != 0) {
@@ -402,18 +432,20 @@ public class DataHistory extends Fragment implements View.OnClickListener {
                             int id = data.getId();
                             String path = data.getAbsPath();
                             String cache = data.getCache();
-                            FileUtils.deleteFileIfExist(path);
-                            FileUtils.deleteFileIfExist(cache);
+                            FileUtils.deleteFile(path + ".png");
+                            FileUtils.deleteFile(path + ".bmp");
+                            FileUtils.deleteFile(cache);
                             db.delete(app.SQLite_LOG_rgb, "id = ?", new String[]{id + ""});
                             mData.remove(BAindex - num);
                             adapter.notifyItemRemoved(BAindex - num);
                             num++;
                         }
                     }
+                    app.CheckState.remove(true);
                     justdelete = true;
 //                    mHandler.sendEmptyMessage(0);
                 } else {
-                    T.show(context, "请勾选要删除的项");
+                    T.showInTop(context, "请勾选要删除的项");
                 }
                 break;
         }
@@ -430,34 +462,30 @@ public class DataHistory extends Fragment implements View.OnClickListener {
     @Override
     public void onResume() {
         super.onResume();
-        refresh();
+        if (app.hasNewHestroy) {
+            refreshCheckState(selectAll);
+            refreshData();
+        }
+        app.hasNewHestroy = false;
         Log.i("DataHestory", "onResume");
     }
 
     public void switchCheckState() {
-        refreshCheckState(selectAll);
+        refreshData();
+        refreshCheckState(false);
+        Log.i("checkstate", app.CheckState.toString());
         if (!app.showCheckBoxs) {
             v_top.setVisibility(View.VISIBLE);
         } else {
-            v_top.setVisibility(View.GONE);
+            v_top.setVisibility(View.INVISIBLE);
         }
-        setAdatper();
+        v_top.setChecked(false);
     }
 
-    public void setAdatper() {
-        adapter = new RecycleAdapterForHistory(context, mData, app.CheckState);
-        adapter.setOnItemClickLitener(mOnItemClickLitener);
-        rv.setAdapter(adapter);
-    }
 
-    void printWithBL(int id) {
-        mBlueToothManager.mBlueToothPrinter.printDataByID(db, id, print, context.getSharedPreferences(Consts.SYSTEM_SETTING_PREFERENCE, MODE_PRIVATE).getBoolean(Consts.KEY_PRINT_ENABLE, false));
-    }
-
-    private void printWithUSB(int id) {
-
-    }
-
+    //    void printWithBL(int id) {
+//        mBlueToothManager.mBlueToothPrinter.printDataByID(db, id, print, context.getSharedPreferences(Consts.SYSTEM_SETTING_PREFERENCE, MODE_PRIVATE).getBoolean(Consts.KEY_PRINT_ENABLE, false));
+//    }
     private int getCheckedNum(ArrayList<Boolean> checkState) {
         int i = 0;
         for (boolean b : checkState) {
@@ -468,19 +496,21 @@ public class DataHistory extends Fragment implements View.OnClickListener {
         return i;
     }
 
+//
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        try {
+//            mBlueToothManager.closeBT();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        try {
-            mBlueToothManager.closeBT();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void refresh() {
-        new RefeshRecycleView().execute();
+    public void refreshData() {
+        mData = getData();
+        mHandler.sendEmptyMessage(0);
+//        new RefeshRecycleView().execute();
     }
 
     private ArrayList<SimpleData> getData() {
@@ -492,8 +522,6 @@ public class DataHistory extends Fragment implements View.OnClickListener {
             withtime = (selectdata.getData() != null) && (!selectdata.getData().equals(""));
             withresult = (selectdata.getResult() != -1);
         }
-        dbHelper = new MyDBHelper(context, app.SQLite_LOG, null, 1);
-        db = dbHelper.getWritableDatabase();
         mData = new ArrayList<>();
 
         Cursor cursor = db.query("rgb", null, null, null, null, null, null);
@@ -501,11 +529,11 @@ public class DataHistory extends Fragment implements View.OnClickListener {
             do {
                 String result = cursor.getString(cursor.getColumnIndex("result"));
                 if (withresult && selectdata.getResult() == 1) {
-                    if (!result.equals("合格")) {
+                    if (!result.equals("阴性")) {
                         break;
                     }
                 } else if (withresult && selectdata.getResult() == 2) {
-                    if (!result.equals("不合格")) {
+                    if (!result.equals("阳性")) {
                         break;
                     }
                 }
@@ -525,17 +553,19 @@ public class DataHistory extends Fragment implements View.OnClickListener {
 
                 mData.add(new SimpleData(
                         id, tips, data, time,
-                        "合格", path, cache
+                        result, path, cache
                 ));
             } while (cursor.moveToNext());
         }
         cursor.close();
         selectdata = null;
         Log.i("mData size", mData.size() + "");
+        Collections.reverse(mData);
         return mData;
     }
 
     void refreshCheckState(boolean selectAll) {
+
         app.CheckState = new ArrayList<>();
         if (mData != null && mData.size() != 0) {
             for (int i = 0; i < mData.size(); i++) {
@@ -554,7 +584,6 @@ public class DataHistory extends Fragment implements View.OnClickListener {
         @Override
         protected Void doInBackground(Void... params) {
             mData = getData();
-
             return null;
         }
 

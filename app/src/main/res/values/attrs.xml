@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="PowerImageView">
-        <attr name="auto_play" format="boolean"></attr>
-    </declare-styleable>
-    <attr name="backgroundColor"  format="color|reference"></attr>
+    <attr name="containerBackground" format="reference|color"></attr>
+    <attr name="cardBackground" format="reference|color"></attr>
+    <attr name="titleColor" format="reference|color"></attr>
+
+    <attr name="textColor" format="reference|color"></attr>
+    <attr name="secondTextColor" format="reference|color"></attr>
+
+    <attr name="selectorBtn" format="reference"></attr>
+    <attr name="selectorListItem" format="reference"></attr>
+
+    <attr name="barSelectTextColor" format="reference|color"></attr>
+    <attr name="barTextColor" format="reference|color"></attr>
+
 </resources>

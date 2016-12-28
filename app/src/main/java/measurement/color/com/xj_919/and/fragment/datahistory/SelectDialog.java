@@ -31,14 +31,14 @@ public class SelectDialog extends DialogFragment {
 
     private int checked_year, checked_mouth, checked_day;
     private selectData mSelectData;
-    private DataHestroy parent;
+    private DataHistory parent;
 
     Context mContext;
     EditText data;
 //    EditText from, to;
     RadioGroup result;
 
-    public SelectDialog(Context context, DataHestroy parent) {
+    public SelectDialog(Context context, DataHistory parent) {
         mContext = context;
         this.parent = parent;
     }
@@ -117,7 +117,7 @@ public class SelectDialog extends DialogFragment {
                 Log.i("result",mSelectData.getResult()+"");
 
                 parent.selectdata = mSelectData;
-                parent.refresh();
+                parent.refreshData();
             }
 
 

@@ -14,7 +14,7 @@ import java.util.List;
 
 import measurement.color.com.xj_919.R;
 import measurement.color.com.xj_919.and.activity.app;
-import measurement.color.com.xj_919.and.fragment.datahestroy.SimpleData;
+import measurement.color.com.xj_919.and.fragment.datahistory.SimpleData;
 
 /**
  * Created by wpc on 2016/10/8.
@@ -28,12 +28,14 @@ public class RecycleAdapterForHistory extends RecyclerView.Adapter<RecycleAdapte
     private Context context;
 
     public RecycleAdapterForHistory(Context context, ArrayList<SimpleData> mData, @Nullable List<Boolean> listCheck) {
-        if(listCheck!=null){
+        if (listCheck != null) {
             this.listCheck = listCheck;
         }
         this.context = context;
         this.mData = mData;
     }
+
+
 
     public interface OnItemClickLitener {
         void onItemClick(View view, int position);
@@ -78,11 +80,11 @@ public class RecycleAdapterForHistory extends RecyclerView.Adapter<RecycleAdapte
         });
 //        holder.tv_time.setTag(position);
         holder.position = position;
-        if(listCheck.get(position)!=null) {
+        if (listCheck != null) {
             holder.cb.setChecked(listCheck.get(position));
         }
 //        holder.cb.setClickable(false);
-        holder.cb.setVisibility(app.showCheckBoxs ? View.VISIBLE : View.GONE);
+        holder.cb.setVisibility(app.showCheckBoxs?View.VISIBLE:View.INVISIBLE);
         holder.tv_data.setText(data.getData());
         holder.tv_result.setText(data.getResult());
         holder.tv_tips.setText(data.getTips());

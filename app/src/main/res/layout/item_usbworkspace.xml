@@ -1,6 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="60dp"
+    android:orientation="horizontal"
+              android:gravity="center_vertical"
+    >
 
-</RelativeLayout>
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/cb_item_usb"
+        android:layout_marginStart="15dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true"/>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_marginLeft="16dp"
+        android:layout_width="0dp"
+        android:layout_weight="3"
+        android:gravity="center_vertical"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:text="检测项目:"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:id="@+id/project_item_usb"
+            />
+
+        <TextView
+            android:text="指标:"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:id="@+id/zhibiao_item"
+          />
+
+    </LinearLayout>
+
+    <TextView
+        android:text="结果:"
+        android:layout_weight="1"
+        android:textSize="18sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/result_item_usb"
+
+       />
+</LinearLayout>
