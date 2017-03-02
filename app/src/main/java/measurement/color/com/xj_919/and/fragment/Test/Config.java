@@ -90,11 +90,11 @@ public class Config {
         System.arraycopy(data, index, bytes, 0, 40);
         results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
         index += 40;
-        System.arraycopy(data, index, bytes, 0, 40);
-        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
+//        System.arraycopy(data, index, bytes, 0, 40);
+//        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
         index += 40;
-        System.arraycopy(data, index, bytes, 0, 40);
-        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
+//        System.arraycopy(data, index, bytes, 0, 40);
+//        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
 
         System.arraycopy(data, 13, bytes, 0, 40);
         results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
@@ -107,23 +107,23 @@ public class Config {
 
 
         index = 53;
-        results = new ArrayList<>();
-        System.arraycopy(data, index, bytes, 0, 40);
-        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
+//        results = new ArrayList<>();
+//        System.arraycopy(data, index, bytes, 0, 40);
+//        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
         index += 40;
-        System.arraycopy(data, index, bytes, 0, 40);
-        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
+//        System.arraycopy(data, index, bytes, 0, 40);
+//        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
         index += 40;
-        System.arraycopy(data, index, bytes, 0, 40);
-        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
+//        System.arraycopy(data, index, bytes, 0, 40);
+//        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
         index += 40;
-        System.arraycopy(data, index, bytes, 0, 40);
-        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
+//        System.arraycopy(data, index, bytes, 0, 40);
+//        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
 //        results.add(new ResultData(1,     130, 100, 100,     10, 10, 10,    500, null));//0xff823231
 //        results.add(new ResultData(2,     20, 30, 30,         10,10, 10,       500, null));//0xff141e1e
 //        results.add(new ResultData(3,      92, 66, 53,       10, 10, 10,      300, null));// 0xff5c4235
 //        results.add(new ResultData(9,     117, 74, 57,         10, 10, 10,    300, null));//0xff754a39
-        settings.add(results);
+//        settings.add(results);
 
         results = new ArrayList<>();
         index += 40;

@@ -21,7 +21,18 @@ public class ResultData {
     public static ResultData getResultDataFromShortArray(Short[] shorts) {
         Short[] diff = new Short[6];
         System.arraycopy(shorts, 8, diff, 0, 6);
-        return new ResultData(shorts[0], shorts[1], shorts[2], shorts[3], shorts[4], shorts[5], shorts[6], shorts[7], diff);
+//        if (shorts[0] == 1 || shorts[0] == 2 || shorts[0] == 4) {
+//            return new ResultData(shorts[0], shorts[1], shorts[2], shorts[3], (short) (shorts[4] + 10), (short) (shorts[5] + 10), (short) (shorts[6] + 10), shorts[7], diff);
+//        } else {
+//            return new ResultData(shorts[0], shorts[1], shorts[2], shorts[3], shorts[4], shorts[5], shorts[6], shorts[7], diff);
+//        }
+        if (shorts[0] == 1 || shorts[0] == 2 || shorts[0] == 4) {
+            return new ResultData(shorts[0], shorts[1], shorts[2], shorts[3], (short) (shorts[4] -5), shorts[5] , shorts[6], shorts[7], diff);
+        } else {
+            return new ResultData(shorts[0], shorts[1], shorts[2], shorts[3], shorts[4], shorts[5], shorts[6], shorts[7], diff);
+        }
+
+//        return new ResultData(shorts[0], shorts[1], shorts[2], shorts[3], shorts[4], shorts[5], shorts[6], shorts[7], diff);
     }
 
     public ResultData(Short index,
@@ -39,7 +50,7 @@ public class ResultData {
         this.b_range = b_range;
         this.num = num;
         this.differences = differences;
-        Log.i("ResultData"+index,detial());
+        Log.i("ResultData" + index, detial());
     }
 
     public Short[] getDifferences() {
@@ -131,7 +142,7 @@ public class ResultData {
     }
 
     public String detial() {
-        return"r:"+ r + "g:" + g + "b:" + b + "r_range:" + r_range + "g_range:" + g_range + "b_range:" + b_range;
+        return "r:" + r + "g:" + g + "b:" + b + "r_range:" + r_range + "g_range:" + g_range + "b_range:" + b_range;
     }
 
     @Override

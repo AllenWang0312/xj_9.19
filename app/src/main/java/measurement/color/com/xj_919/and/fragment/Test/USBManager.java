@@ -52,21 +52,20 @@ import measurement.color.com.xj_919.and.activity.app;
  */
 public class USBManager {
 
-    static final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";// 权限
-    public Bitmap bitmap;
-    private static USBManager instance;
-    public USBDataTransceiver TransceiverInstance;
-    private final String tag = "USBManager";
-
     //-1设备不支持usbhost，
     // 0usbmanager可用
     // 1derive可用
     // 2interface可用
     // 3endpoint可用/可以发送拍照请求
     private static int state = -1;
-
     public static boolean printable = false;
 
+    //    static final String ACTION_USB_PERMISSION = "com.android.example.USB_PERMISSION";// 权限
+    private static USBManager instance;
+    public USBDataTransceiver TransceiverInstance;
+    private final String tag = "USBManager";
+
+    public Bitmap bitmap;
 
     //usb相关
     static Activity mContext;
@@ -123,11 +122,8 @@ public class USBManager {
         return hasInit;
     }
 
-    public void setHasInit(boolean hasInit) {
-        this.hasInit = hasInit;
-    }
 
-    public static USBManager initUsbManager(Context context) {
+    public static USBManager init(Context context) {
         if (mUsbManager == null) {
             mUsbManager = (UsbManager) context.getSystemService(Context.USB_SERVICE);
         }
@@ -326,7 +322,6 @@ public class USBManager {
                 int j = mUsbDeviceConnection.bulkTransfer(epBulkIn, Receiveytes, Receiveytes.length, 1000);
                 Log.i("sendTakeConfigRequest" + i + "" + j + "" + Receiveytes.length, clsPublic.bytesToHexString(Receiveytes));
                 return Receiveytes;
-
             } else {
                 return null;
             }
@@ -650,7 +645,8 @@ public class USBManager {
 
         private void initPartData() {
             PositionSets positionSets = Config.getInstance().getPositionSets();
-            datas = getPartData(getPoints(positionSets.getCent_x(), positionSets.getCent_y(), positionSets.getCent_bew()), positionSets.getR());
+//            datas = getPartData(getPoints(positionSets.getCent_x(), positionSets.getCent_y(), positionSets.getCent_bew()), positionSets.getR());
+            datas = getPartData(positionSets.getCent_x(), positionSets.getCent_y(), positionSets.getCent_bew(), positionSets.getR());
         }
 
         private boolean findBlackPoint(int[] ints, int gray, int range, int min_num) {
@@ -702,6 +698,33 @@ public class USBManager {
             return datalist;
         }
 
+        private ArrayList<int[]> getPartData(short centerX, short centerY, short between, short r) {
+            ArrayList<int[]> datalist = new ArrayList<>();
+            int[] arr1 = new int[(2*between + 2 * r + 3) * (2 * r + 1)];
+            //存放的数组   从该数组的第几位存储  一行多少个像素 左上角X Y坐标   长 高
+            bitmap.getPixels(arr1, 0, (2*between + 2 * r + 3), (centerX - between - r), (centerY - between - r), (2*between + 2 * r + 3), (2 * r + 1));
+            datalist.add(arr1);
+
+            int[] arr2;
+//        int[] arr2 = new int[(2 * r + 1) * (2 * r + 1)];
+//        bitmap.getPixels(arr2, 0, (2 * r + 1), (centerX + between - r), (centerY - between - r), (2 * r + 1), (2 * r + 1));
+//        datalist.add(arr2);
+
+            arr2 = new int[(2 * r + 1) * (2 * r + 1)];
+            bitmap.getPixels(arr2, 0, (2 * r + 1), (centerX - between - r), (centerY - r), (2 * r + 1), (2 * r + 1));
+            datalist.add(arr2);
+            arr2 = new int[(2 * r + 1) * (2 * r + 1)];
+            bitmap.getPixels(arr2, 0, (2 * r + 1), (centerX + between - r), (centerY - r), (2 * r + 1), (2 * r + 1));
+            datalist.add(arr2);
+
+            arr2 = new int[(2 * r + 1) * (2 * r + 1)];
+            bitmap.getPixels(arr2, 0, (2 * r + 1), (centerX - between - r), (centerY + between - r), (2 * r + 1), (2 * r + 1));
+            datalist.add(arr2);
+            arr2 = new int[(2 * r + 1) * (2 * r + 1)];
+            bitmap.getPixels(arr2, 0, (2 * r + 1), (centerX + between - r), (centerY + between - r), (2 * r + 1), (2 * r + 1));
+            datalist.add(arr2);
+            return datalist;
+        }
 
         ArrayList<int[]> datas;
 
@@ -764,86 +787,96 @@ public class USBManager {
                         found.get(0).setHasfound(true);
                         found.get(1).setHasfound(false);
                         found.get(2).setHasfound(false);
-                        found.get(3).setHasfound(false);
-                        found.get(4).setHasfound(false);
+//                        found.get(3).setHasfound(false);
+//                        found.get(4).setHasfound(false);
                     } else {
                         found.get(0).setHasfound(false);
                         found.get(1).setHasfound(true);
-                        found.get(3).setHasfound(false);
+//                        found.get(3).setHasfound(false);
                         found.get(2).setHasfound(false);
-                        found.get(4).setHasfound(false);
+//                        found.get(4).setHasfound(false);
                     }
                 } else {
-                    if (boo[2]) {
-                        if (boo[3]) {
-                            found.get(0).setHasfound(false);
-                            found.get(1).setHasfound(false);
-                            found.get(2).setHasfound(false);
-                            found.get(3).setHasfound(true);
-                            found.get(4).setHasfound(false);
-                        } else {
-                            found.get(1).setHasfound(false);
-                            found.get(0).setHasfound(false);
-                            found.get(3).setHasfound(false);
-                            found.get(2).setHasfound(true);
-                            found.get(4).setHasfound(false);
-
-                        }
-                    } else {
-                        if (boo[4]) {
-                            found.get(1).setHasfound(false);
-                            found.get(0).setHasfound(false);
-                            found.get(3).setHasfound(false);
-                            found.get(2).setHasfound(false);
-                            found.get(4).setHasfound(true);
-                        } else {
-                            found.get(0).setHasfound(false);
-                            found.get(1).setHasfound(false);
-                            found.get(2).setHasfound(false);
-                            found.get(3).setHasfound(false);
-                            found.get(4).setHasfound(false);
-                        }
-
-                    }
-
-                }
-            }
-            //对2号区域特殊判断
-            if (area == 1) {
-                if (boo[0]) {
-                    if (boo[1]) {
-                        found.get(1).setHasfound(false);
-                        found.get(0).setHasfound(true);
-                        found.get(3).setHasfound(false);
-                        found.get(2).setHasfound(false);
-                    } else {
-                        found.get(1).setHasfound(true);
+                    if(boo[2]){
                         found.get(0).setHasfound(false);
-                        found.get(3).setHasfound(false);
-                        found.get(2).setHasfound(false);
-                    }
-                } else {
-                    if (boo[2]) {
-                        if (boo[3]) {
-                            found.get(1).setHasfound(false);
-                            found.get(0).setHasfound(false);
-                            found.get(3).setHasfound(true);
-                            found.get(2).setHasfound(false);
-                        } else {
-                            found.get(1).setHasfound(false);
-                            found.get(0).setHasfound(false);
-                            found.get(3).setHasfound(false);
-                            found.get(2).setHasfound(true);
-                        }
-                    } else {
+                        found.get(1).setHasfound(false);
+                        found.get(2).setHasfound(true);
+                    }else {
                         found.get(0).setHasfound(false);
                         found.get(1).setHasfound(false);
                         found.get(2).setHasfound(false);
-                        found.get(3).setHasfound(false);
                     }
+//                    if (boo[2]) {
+//                        if (boo[3]) {
+//                            found.get(0).setHasfound(false);
+//                            found.get(1).setHasfound(false);
+//                            found.get(2).setHasfound(false);
+////                            found.get(3).setHasfound(true);
+////                            found.get(4).setHasfound(false);
+//                        } else {
+//                            found.get(1).setHasfound(false);
+//                            found.get(0).setHasfound(false);
+////                            found.get(3).setHasfound(false);
+//                            found.get(2).setHasfound(true);
+////                            found.get(4).setHasfound(false);
+//
+//                        }
+//                    }
+//                    else {
+//                        if (boo[4]) {
+//                            found.get(1).setHasfound(false);
+//                            found.get(0).setHasfound(false);
+////                            found.get(3).setHasfound(false);
+//                            found.get(2).setHasfound(false);
+////                            found.get(4).setHasfound(true);
+////                        } else {
+//                            found.get(0).setHasfound(false);
+//                            found.get(1).setHasfound(false);
+//                            found.get(2).setHasfound(false);
+////                            found.get(3).setHasfound(false);
+////                            found.get(4).setHasfound(false);
+//                        }
+//
+//                    }
 
                 }
             }
+//            //对2号区域特殊判断
+//            if (area == 1) {
+//                if (boo[0]) {
+//                    if (boo[1]) {
+//                        found.get(1).setHasfound(false);
+//                        found.get(0).setHasfound(true);
+//                        found.get(3).setHasfound(false);
+//                        found.get(2).setHasfound(false);
+//                    } else {
+//                        found.get(1).setHasfound(true);
+//                        found.get(0).setHasfound(false);
+//                        found.get(3).setHasfound(false);
+//                        found.get(2).setHasfound(false);
+//                    }
+//                } else {
+//                    if (boo[2]) {
+//                        if (boo[3]) {
+//                            found.get(1).setHasfound(false);
+//                            found.get(0).setHasfound(false);
+//                            found.get(3).setHasfound(true);
+//                            found.get(2).setHasfound(false);
+//                        } else {
+//                            found.get(1).setHasfound(false);
+//                            found.get(0).setHasfound(false);
+//                            found.get(3).setHasfound(false);
+//                            found.get(2).setHasfound(true);
+//                        }
+//                    } else {
+//                        found.get(0).setHasfound(false);
+//                        found.get(1).setHasfound(false);
+//                        found.get(2).setHasfound(false);
+//                        found.get(3).setHasfound(false);
+//                    }
+//
+//                }
+//            }
 //            Log.i("foundlist", Arrays.asList(fondlist)+"");
             return found;
         }
@@ -1058,6 +1091,4 @@ public class USBManager {
             rr = (int) Math.pow(r, 2);
         }
     }
-
-
 }

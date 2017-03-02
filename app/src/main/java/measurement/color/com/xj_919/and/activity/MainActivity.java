@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        manager = USBManager.initUsbManager(MainActivity.this);
+        manager = USBManager.init(MainActivity.this);
         manager.registerReceiver(MainActivity.this);
 
         mSharedPreference = SharePreferenceHelper.init(this);
