@@ -31,10 +31,10 @@ public class Config {
 
     public static String names[] = {
             "铵盐",
-            "TNT (三硝基甲苯)",//1
-            "DNT (二硝基甲苯)",//2
+            "TNT (三硝基甲苯)",//1  黑红 浅红
+            "DNT (二硝基甲苯)",//2  黑绿
             "硫磺",//3
-            "RDX(黑索金)",//4  硝酸甘油酯类（液体炸药）、硝胺类(黑索金、奥克托金)、亚硝酸盐类
+            "RDX(黑索金)",//4 浅红   硝酸甘油酯类（液体炸药）、硝胺类(黑索金、奥克托金)、亚硝酸盐类
             "尿素", //5
             "硝酸盐", //6
             "氯酸盐", //7
@@ -60,10 +60,12 @@ public class Config {
 // 3600
 
 // 04 00 64 00  4B 00  4B 00  0A 000A 000A 0032 0000 0000 0000 0000 0000 0000   0000 0000 0000 0000 0000 0000
+
 // 01 00 37 00  2F 00  2F 00  05 0007 0007 00C8 0000 0000 0000 0000 0000 0000   0000 0000 0000 0000 0000 0000
 // 02 00 2D 00  3C 00  46 00  0F 000A 000A 00C8 0000 0000 0000 0000 0000 0000   0000 0000 0000 0000 0000 0000
 // 03 00 55 00  42 00  31 00  05 000A 0006 0090 0100 0000 0000 0000 0000 0000   0000 0000 0000 0000 0000 0000
 // 09 00 75 00  42 00  35 00  0A 000A 000A 002C 0100 0000 0000 0000 0000 0000   0000 0000 0000 0000 0000 0000
+
 // 06 00 1E 00  1E 00  28 00  1E 001E 001E 002C 0100 0000 0000 0000 0000 0000   0000 0000 0000 0000 0000 0000
 // 06 00 82 00  5A 00  46 00  0A 000A 000A 002C 0100 0000 0000 0000 0000 0000   0000 0000 0000 0000 0000 0000
 // 07 00 3C 00  3C 00  5A 00  3C 003C 003C 00C8 00FD FF00 0000 0000 0000 000A   0000 0000 0000 0000 0000 0000
@@ -82,24 +84,23 @@ public class Config {
         ArrayList<ResultData> results = new ArrayList<>();
 //        results.add(new ResultData(4,      100, 75, 75,     10, 10, 10,     50, null));//0xff644b4b
 //        results.add(new ResultData(11,     100, 75, 75,     10, 10, 10,     50, null));
-        index += 40;
-        System.arraycopy(data, index, bytes, 0, 40);
-        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
 
         index += 40;
-        System.arraycopy(data, index, bytes, 0, 40);
+        System.arraycopy(data, index, bytes, 0, 40);//1
         results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
         index += 40;
-//        System.arraycopy(data, index, bytes, 0, 40);
-//        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
+        System.arraycopy(data, index, bytes, 0, 40);//2
+        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
         index += 40;
-//        System.arraycopy(data, index, bytes, 0, 40);
-//        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
-
-        System.arraycopy(data, 13, bytes, 0, 40);
+        System.arraycopy(data, index, bytes, 0, 40);//3
+        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
+        index += 40;
+        System.arraycopy(data, index, bytes, 0, 40);//9
         results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
 
-
+        index = 13;
+        System.arraycopy(data, index, bytes, 0, 40);//4
+        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
 
 //        System.arraycopy(data,index,bytes,0,40);index+=40;
 //        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
@@ -196,7 +197,7 @@ public class Config {
 
     public ArrayList<ArrayList<ResultData>> getSettings() {
         if (settings == null) {
-                initSettings(USBManager.getInstance().TransceiverInstance.sendTakeConfigRequest());
+            initSettings(USBManager.getInstance().TransceiverInstance.sendTakeConfigRequest());
         }
         for (int i = 0; i < settings.size(); i++) {
             for (int j = 0; j < settings.get(i).size(); j++) {

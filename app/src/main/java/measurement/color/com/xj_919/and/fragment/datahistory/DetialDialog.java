@@ -50,7 +50,7 @@ public class DetialDialog extends DialogFragment {
         View v = LayoutInflater.from(context).inflate(R.layout.detialdialog_layout, null);
         result = (ImageView) v.findViewById(R.id.iv_small_img_detial);
         lv = (ListView) v.findViewById(R.id.lv_detial);
-        lv.setAdapter(new SimpleAdapter(context,  getArray(), R.layout.item_detialdialog, new String[]{"area", "detial", "result"}, new int[]{R.id.index_item_detial, R.id.detial_item_detial, R.id.result_item_detial}));
+        lv.setAdapter(new SimpleAdapter(context,  getArray(id), R.layout.item_detialdialog, new String[]{"area", "detial", "result"}, new int[]{R.id.index_item_detial, R.id.detial_item_detial, R.id.result_item_detial}));
 //        rv = (RecyclerView) v.findViewById(R.id.rv_detial);
 //        rv.setLayoutManager(new LinearLayoutManager(context));
 //        //        mRecyclerView.setLayoutManager(new GridLayoutManager(context,4));
@@ -92,7 +92,7 @@ public class DetialDialog extends DialogFragment {
 //        return mDatas;
 //    }
 
-    ArrayList<HashMap<String, String>> getArray() {
+    ArrayList<HashMap<String, String>> getArray(int id) {
         ArrayList<HashMap<String, String>>   mDatas = new ArrayList<>();
         Cursor c = db.rawQuery("select * from rgb where id = ?", new String[]{id + ""});
         if (c.moveToFirst()) {
@@ -106,7 +106,7 @@ public class DetialDialog extends DialogFragment {
                     Toast.makeText(context, "图像文件丢失", Toast.LENGTH_SHORT).show();
                 }
 
-                for (int i = 1; i < 7; i++) {
+                for (int i = 1; i < 6; i++) {
                     HashMap<String, String> data = new HashMap<>();
                     data.put("area", i + "");
                     data.put("detial", c.getString(c.getColumnIndex("detial" + i)));

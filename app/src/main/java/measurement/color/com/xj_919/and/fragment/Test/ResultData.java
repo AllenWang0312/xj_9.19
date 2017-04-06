@@ -26,8 +26,13 @@ public class ResultData {
 //        } else {
 //            return new ResultData(shorts[0], shorts[1], shorts[2], shorts[3], shorts[4], shorts[5], shorts[6], shorts[7], diff);
 //        }
-        if (shorts[0] == 1 || shorts[0] == 2 || shorts[0] == 4) {
-            return new ResultData(shorts[0], shorts[1], shorts[2], shorts[3], (short) (shorts[4] -5), shorts[5] , shorts[6], shorts[7], diff);
+//        if (shorts[0] == 1 || shorts[0] == 2 || shorts[0] == 4) {
+//            return new ResultData(shorts[0], shorts[1], shorts[2], shorts[3], (short) (shorts[4] -5), shorts[5] , shorts[6], shorts[7], diff);
+//        } else {
+//            return new ResultData(shorts[0], shorts[1], shorts[2], shorts[3], shorts[4], shorts[5], shorts[6], shorts[7], diff);
+//        }
+        if (shorts[0] == 3) {
+            return new ResultData(shorts[0], (short) (shorts[1] - 5), shorts[2], (short) (shorts[3] + 3), (short) (shorts[4] + 5), (short) (shorts[5] + 3), (short) (shorts[6] + 5), shorts[7], diff);
         } else {
             return new ResultData(shorts[0], shorts[1], shorts[2], shorts[3], shorts[4], shorts[5], shorts[6], shorts[7], diff);
         }
@@ -147,6 +152,10 @@ public class ResultData {
 
     @Override
     public String toString() {
-        return (this.isHasfound() ? "发现[" : "未发现[") + (int) this.getIndex() + "]号样品" + names;
+        return (this.isHasfound() ? "发现[" : "未发现[") +
+//                (int) this.getIndex() + "]号样品" +
+                names
+                + "]"
+                ;
     }
 }

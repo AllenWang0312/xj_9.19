@@ -392,7 +392,7 @@ public class USBManager {
         }
 
         public void printStringWithUSB(int id) {
-            checkPermission();
+//            checkPermission();
             Print(getPrintStrings(id));
         }
 
@@ -404,7 +404,7 @@ public class USBManager {
                 do {
                     strs.add("日期:" + c.getString(c.getColumnIndex("data")) + "\r\n");
                     strs.add("时间:" + c.getString(c.getColumnIndex("time")) + "\r\n");
-                    for (int j = 6; j > 0; j--) {
+                    for (int j = 5; j > 0; j--) {
                         if ((c.getString(c.getColumnIndex("result" + j))).equals("阳性")) {
                             String content = "区域" + j + ":发现" + c.getString(c.getColumnIndex("detial" + j)) + "\r\n";
 //                            if (content.length() > lineLength) {
@@ -741,11 +741,13 @@ public class USBManager {
             for (int i = 0; i < datas.size(); i++) {
                 result_data.add(foundSimilarColor(datas.get(i), results.get(i), i));
             }
-            if (result_data.get(3).get(0).hasfound) {
-                result_data.get(3).get(0).setNames("铵盐");
-                if (result_data.get(2).get(0).hasfound) {
-                    result_data.get(3).get(0).setHasfound(false);
-                    result_data.get(2).get(0).setNames("硝酸铵");
+            if (result_data.get(2).get(0).hasfound) {
+                result_data.get(2).get(0).setNames("铵盐");
+                result_data.get(2).get(0).setIndex((short) 0);
+                if (result_data.get(1).get(0).hasfound) {
+                    result_data.get(2).get(0).setHasfound(false);
+                    result_data.get(1).get(0).setNames("硝酸铵");
+                    result_data.get(1).get(0).setIndex((short) 6);
                 }
 
             }
@@ -787,24 +789,36 @@ public class USBManager {
                         found.get(0).setHasfound(true);
                         found.get(1).setHasfound(false);
                         found.get(2).setHasfound(false);
-//                        found.get(3).setHasfound(false);
-//                        found.get(4).setHasfound(false);
+                        found.get(3).setHasfound(false);
+                        found.get(4).setHasfound(false);
                     } else {
                         found.get(0).setHasfound(false);
                         found.get(1).setHasfound(true);
-//                        found.get(3).setHasfound(false);
                         found.get(2).setHasfound(false);
-//                        found.get(4).setHasfound(false);
+                        found.get(3).setHasfound(false);
+                        found.get(4).setHasfound(false);
                     }
                 } else {
                     if(boo[2]){
-                        found.get(0).setHasfound(false);
-                        found.get(1).setHasfound(false);
-                        found.get(2).setHasfound(true);
-                    }else {
-                        found.get(0).setHasfound(false);
+                        found.get(0).setHasfound(true);
                         found.get(1).setHasfound(false);
                         found.get(2).setHasfound(false);
+                        found.get(3).setHasfound(false);
+                        found.get(4).setHasfound(false);
+                    }else {
+                        if (boo[4]) {
+                            found.get(1).setHasfound(false);
+                            found.get(0).setHasfound(false);
+                            found.get(2).setHasfound(false);
+                            found.get(3).setHasfound(false);
+                            found.get(4).setHasfound(true);
+                        } else {
+                            found.get(0).setHasfound(false);
+                            found.get(1).setHasfound(false);
+                            found.get(2).setHasfound(false);
+                            found.get(3).setHasfound(false);
+                            found.get(4).setHasfound(false);
+                        }
                     }
 //                    if (boo[2]) {
 //                        if (boo[3]) {
