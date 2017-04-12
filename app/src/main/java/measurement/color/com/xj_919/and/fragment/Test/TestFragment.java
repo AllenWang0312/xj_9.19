@@ -45,6 +45,7 @@ import static measurement.color.com.xj_919.and.activity.app.cent_X;
 import static measurement.color.com.xj_919.and.activity.app.cent_Y;
 import static measurement.color.com.xj_919.and.activity.app.cent_bet;
 import static measurement.color.com.xj_919.and.activity.app.round_r;
+import static measurement.color.com.xj_919.and.fragment.Test.Consts.reagent_names;
 
 /**
  * Created by wpc on 2016/9/21.
@@ -78,7 +79,7 @@ public class TestFragment extends Fragment implements View.OnClickListener {
     private static final int START_ASY_TASK = 10;
     private static final int TEST_FINISH = 11;
     private static final int TEST_REFESH = 12;
-    private static final int SET_PROGRESS=13;
+    private static final int SET_PROGRESS = 13;
 
     private BlueToothManager mBlueToothManager;
     private Activity context;
@@ -129,6 +130,7 @@ public class TestFragment extends Fragment implements View.OnClickListener {
 //                    break;
                 case TEST_REFESH:
                     adapter.onRefesh(resultData);
+                    mUSBManager.TransceiverInstance.sendNotifyUserRequest(adapter.HasDangerous());
                     break;
                 case SET_PROGRESS:
                     adapter.setProgress(msg.arg1, msg.arg2);
@@ -215,7 +217,7 @@ public class TestFragment extends Fragment implements View.OnClickListener {
         });
         adapter = new PagerAdapterForTestGuide(context);
         vp.setAdapter(adapter);
-        vp.setCurrentItem(0);
+//        vp.setCurrentItem(4);
         vp.setOffscreenPageLimit(5);
         vp.setPagingEnabled(false);
         vp.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
@@ -228,6 +230,7 @@ public class TestFragment extends Fragment implements View.OnClickListener {
             public void onPageSelected(int position) {
                 pagerindex = position;
                 if (pagerindex == 4) {
+
                     skep.setText("开始测试");
                     adapter.setProgress(mSharedPreferences.getInt(Consts.TakePhotoTimes, 1), 0);
                     if (cb.isChecked()) {
@@ -259,6 +262,11 @@ public class TestFragment extends Fragment implements View.OnClickListener {
             }
         });
     }
+
+    public static final int PLC_POSITION_TEST = 2;
+    public static final int POSITION_TEST = 1;
+    public static final int TEST = 0;
+    public static final int WHITE_BOARDTEST = -1;
 
     //testMod 2下位机固定位置校准 1位置调整校准  0正常测试  -1白板录入
     private void test(final int testMod, final int times) {
@@ -376,19 +384,25 @@ public class TestFragment extends Fragment implements View.OnClickListener {
                 }
                 break;
             case R.id.bt_usb:
-                if (position_selecter.isChecked()) {
-                    test(2, 1);
+                boolean b = SharePreferenceHelper.getInstance().getBoolean(Consts.ROOT_PROMISSION, false);
+                if (b) {
+                    test(PLC_POSITION_TEST, 1);
                 } else {
-                    test(1, 1);
+                    if (position_selecter.isChecked()) {
+                        test(PLC_POSITION_TEST, 1);
+                    } else {
+                        test(POSITION_TEST, 1);
+                    }
                 }
+
 
                 break;
             case R.id.bblr_test:
-                test(-1, 1);
+                test(WHITE_BOARDTEST, 1);
                 break;
             case R.id.bt_save_usb:
                 if (mUSBManager.TransceiverInstance != null) {
-                    mUSBManager.TransceiverInstance.saveData(0, et_tips.getText().toString(), true, resultData);
+                    mUSBManager.TransceiverInstance.saveData(0, et_tips.getText().toString(), true, adapter.getResult());
                 } else {
                     Toast.makeText(context, "请先测试样品", Toast.LENGTH_SHORT).show();
                 }
@@ -458,8 +472,8 @@ public class TestFragment extends Fragment implements View.OnClickListener {
             case R.id.bt_skep_test:
                 if (pagerindex == 4) {
                     bt_print.setVisibility(View.GONE);
-                    adapter.CleanListView();
-                    test(0, mSharedPreferences.getInt(Consts.TakePhotoTimes, 1));
+//                    adapter.CleanListView();
+                    test(TEST, mSharedPreferences.getInt(Consts.TakePhotoTimes, 1));
                     adapter.setProgress(mSharedPreferences.getInt(Consts.TakePhotoTimes, 1), 0);
                 } else {
                     vp.setCurrentItem(4, true);
@@ -509,10 +523,14 @@ public class TestFragment extends Fragment implements View.OnClickListener {
     boolean busy = false;
 
 
-    ArrayList<ArrayList<ResultData>> resultData;
+    ArrayList<PartData> resultData;
+    public static final int SUCCESS = 1;
+    public static final int DATA_UNABLE = 0;
+    public static final int CONNECT_UNABLE = -1;
+    public static final int NONE_WHIRT_BOARD = -2;
 
     private class MyTask extends AsyncTask<String, Integer, Integer> {
-//1 成功 0 数据不可用  -1连接不可用  -2没有白板
+        //1 成功 0 数据不可用  -1连接不可用  -2没有白板
         int resultful;
         boolean save;
         int test_mod;
@@ -534,7 +552,7 @@ public class TestFragment extends Fragment implements View.OnClickListener {
                 dialog.setCancelable(false);
                 dialog.show();
             }
-            dialog.setMessage("测试中["+times+"]...");
+            dialog.setMessage("测试中[" + times + "]...");
 //            if (dialog == null) {
 //                dialog = new ProgressDialog(context);
 //                dialog.setCancelable(false);
@@ -559,29 +577,30 @@ public class TestFragment extends Fragment implements View.OnClickListener {
             busy = true;
             if (mUSBManager != null) {
 //                mUSBManager.TransceiverInstance.checkPermission();
-                if (test_mod != 1) {
+                if (test_mod != POSITION_TEST) {
                     if (Config.getInstance().getSettings() == null) {
                         Config.getInstance().initSettings(mUSBManager.TransceiverInstance.sendTakeConfigRequest());
                     }
                 }
-                if (mUSBManager.TransceiverInstance.sendTakePhotoRequest((byte) 0x00, mSharedPreferences.getInt(Consts.TakePhotoDelay,SharePreferenceHelper.getInstance().getInt(Consts.TakePhotoDelay,180)))) {//190
+                if (mUSBManager.TransceiverInstance.sendTakePhotoRequest((byte) 0x00, mSharedPreferences.getInt(Consts.TakePhotoDelay, SharePreferenceHelper.getInstance().getInt(Consts.TakePhotoDelay, 180)))) {//190
                     //                mUSBManager.TransceiverInstance.initData();
                     resultful = mUSBManager.TransceiverInstance.LoadDate(test_mod, mSharedPreferences.getInt(Consts.LIGHT_HIGHT, 20) * 10);
-                    if (resultful==1) {
-                        if (test_mod == 0) {
+                    if (resultful == SUCCESS) {
+                        if (test_mod == TEST) {
                             resultData = mUSBManager.TransceiverInstance.checkData();
-                            Log.i("result",resultData.toString());
+                            removeDatas();
+//                            Log.i("resultData",resultData.toString());
                             if (save) {
                                 mUSBManager.TransceiverInstance.saveData(0, tips, true, resultData);
                                 hasSaved = true;
                             }
-                            notifityUser(resultData);
-                        } else if (test_mod == -1) {
+                            notifityUser();
+                        } else if (test_mod == WHITE_BOARDTEST) {
                             mUSBManager.TransceiverInstance.saveData(-1, null, null, null);
                         }
                     }
                 } else {
-                    resultful=-1;
+                    resultful = CONNECT_UNABLE;
 //                    Toast.makeText(context, "连接错误", Toast.LENGTH_SHORT).show();
 //                    Message m=new Message();
 //                    m.arg1=0;m.arg2=-3;
@@ -597,39 +616,29 @@ public class TestFragment extends Fragment implements View.OnClickListener {
             return null;
         }
 
-        private void notifityUser(ArrayList<ArrayList<ResultData>> resultData) {
+        private void notifityUser() {
             boolean hasFound = false;
-            for (int i = 0; i < resultData.size(); i++) {
-                for (int j = 0; j < resultData.get(i).size(); j++) {
-                    if (resultData.get(i).get(j).isHasfound()) {
-                        hasFound = true;
-                        break;
-                    }
-                }
-            }
-            mUSBManager.TransceiverInstance.sendNotifyUserRequest(hasFound);
         }
 
         //onPostExecute方法用于在执行完后台任务后更新UI,显示结果
         @Override
         protected void onPostExecute(Integer result) {
-            if (resultful!=1) {
+            if (resultful != SUCCESS) {
                 dialog.cancel();
-                adapter.setProgress(null, resultful-2);
+                adapter.setProgress(null, resultful - 2);
                 timer.cancel();
 //                Toast.makeText(context, "请正确放置被测物位置", Toast.LENGTH_SHORT).show();
-            }else if(resultful==-2){
+            } else if (resultful == NONE_WHIRT_BOARD) {
                 dialog.cancel();
-                adapter.setProgress(null, resultful-2);
+                adapter.setProgress(null, resultful - 2);
                 timer.cancel();
-            }
-            else {
+            } else {
                 mImageView.setImageBitmap(mUSBManager.bitmap);
                 adapter.setProgress(null, times);
-                if (test_mod == 1) {
+                if (test_mod == POSITION_TEST) {
                     saveChange();
                     dialog.cancel();
-                } else if (test_mod == 0) {
+                } else if (test_mod == TEST) {
 //                   getResultReport(judge);
                     if (times == mSharedPreferences.getInt(Consts.TakePhotoTimes, 1)) {
                         if (VibratorHelper.isOpen()) {
@@ -645,7 +654,7 @@ public class TestFragment extends Fragment implements View.OnClickListener {
                 busy = false;
 //            mUSBManager.TransceiverInstance.arr = new int[(mUSBManager.TransceiverInstance.length / 2) * (mUSBManager.TransceiverInstance.height / 2)];
 //            mUSBManager.bitmap.recycle();
-                if (test_mod == 0) {
+                if (test_mod == TEST) {
                     handler.sendEmptyMessage(TEST_REFESH);
                 }
 
@@ -660,25 +669,76 @@ public class TestFragment extends Fragment implements View.OnClickListener {
         }
     }
 
-    /**
-     * 根据6个区域返回数据的集合得出报告list
-     *
-     * @param judge
-     * @return
-     */
-
-    private ArrayList<String> getResultReport(ArrayList<ArrayList<ResultData>> judge) {
-        ArrayList<String> results = new ArrayList<>();
-        for (int i = 0; i < judge.size(); i++) {
-            ArrayList<ResultData> datas = judge.get(i);
-            for (int j = 0; j < datas.size(); j++) {
-                if (datas.get(j).hasfound) {
-                    results.add(datas.get(j).toString());
-                }
+    private void removeDatas() {
+        boolean fond_gmsj = false;
+        //3.4
+        JudgeCondition part3 = resultData.get(2).getResults().get(0);//蓝色
+        JudgeCondition part4 = resultData.get(3).getResults().get(0);//橘黄
+        JudgeCondition part5 = resultData.get(3).getResults().get(1);//绿色
+        resultData.get(3).setResult(new JudgeCondition(null, 3, 200, 100));
+        if (part3.isEnough()) {
+            if (part4.isEnough()) {
+                resultData.get(2).setResult(new JudgeCondition(reagent_names[13], 2, part3.getNum() + part4.getNum(), part3.getFind_num() + part4.getFind_num()));
+            } else if (part5.isEnough()) {
+                resultData.get(3).setResult(new JudgeCondition(reagent_names[12], 3, part3.getNum() + part5.getNum(), part3.getFind_num() + part5.getFind_num()));
+                fond_gmsj = true;
+            } else {
+                resultData.get(2).setResult(new JudgeCondition(reagent_names[6], 2, part3.getNum(), part3.getFind_num()));
+            }
+        } else {
+            if (part4.isEnough()) {
+                resultData.get(2).setResult(new JudgeCondition(reagent_names[0], 2, part4.getNum(), part4.getFind_num()));
             }
         }
-        return results;
+
+
+        //2
+        if (fond_gmsj) {
+            PartData gmsj = resultData.get(3);
+            ArrayList<PartData> rem = new ArrayList<>();
+            for (PartData p : resultData) {
+                if (p != gmsj) {
+                    rem.add(p);
+                }
+            }
+            for (PartData p : rem) {
+                resultData.remove(p);
+            }
+        } else {
+
+            ArrayList<PartData> rem = new ArrayList<>();
+            for (PartData p : resultData) {
+//            Log.i("partdata",p.toString());
+                if (!p.isHasFound()) {
+                    rem.add(p);
+                }
+            }
+//        Log.i("rem",rem.toString());
+            for (PartData p2 : rem) {
+                resultData.remove(p2);
+            }
+        }
     }
+
+//    /**
+//     * 根据6个区域返回数据的集合得出报告list
+//     *
+//     * @param judge
+//     * @return
+//     */
+//
+//    private ArrayList<String> getResultReport(ArrayList<ArrayList<ResultData>> judge) {
+//        ArrayList<String> results = new ArrayList<>();
+//        for (int i = 0; i < judge.size(); i++) {
+//            ArrayList<ResultData> datas = judge.get(i);
+//            for (int j = 0; j < datas.size(); j++) {
+//                if (datas.get(j).hasfound) {
+//                    results.add(datas.get(j).toString());
+//                }
+//            }
+//        }
+//        return results;
+//    }
 
     /**
      * 将当前位置参数存入sharedpreference

@@ -1,15 +1,15 @@
 package measurement.color.com.xj_919.and.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.support.annotation.Nullable;
 import android.support.v4.view.PagerAdapter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
+import android.widget.ExpandableListView;
 import android.widget.ImageView;
-import android.widget.ListView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
@@ -17,7 +17,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 
 import measurement.color.com.xj_919.R;
-import measurement.color.com.xj_919.and.fragment.Test.ResultData;
+import measurement.color.com.xj_919.and.fragment.Test.PartData;
+import measurement.color.com.xj_919.and.fragment.Test.ResultExpAdapter;
 
 /**
  * Created by wpc on 2016/11/18.
@@ -28,9 +29,11 @@ public class PagerAdapterForTestGuide extends PagerAdapter {
     Context context;
     LayoutInflater inflater;
     ArrayList<View> pagers;
-    ListView result;
-    ArrayList<String> resultString = new ArrayList<>();
+    //    ListView result;
+    ExpandableListView exp;
     HashSet<String> data;
+    LinearLayout ll;
+    ImageView iv;
     TextView tv;
     ProgressBar pb;
 
@@ -40,13 +43,16 @@ public class PagerAdapterForTestGuide extends PagerAdapter {
 
     int[] ImgIds = {R.mipmap.unknow_pic, R.mipmap.unknow_pic, R.mipmap.unknow_pic, R.mipmap.unknow_pic};
     String[] strArrays;
-    String[] tips = {"1", "2", "3", "4"};
 
     public PagerAdapterForTestGuide(Context context) {
         this.context = context;
         inflater = LayoutInflater.from(context);
         pagers = new ArrayList<>();
         strArrays = context.getResources().getStringArray(R.array.gride_str_array);
+    }
+
+    public ArrayList<PartData> getResult() {
+        return adapter.getDatas();
     }
 
     @Override
@@ -62,8 +68,12 @@ public class PagerAdapterForTestGuide extends PagerAdapter {
         } else {
             data = new HashSet<>();
             v = inflater.inflate(R.layout.enditem_vp_test, null);
-            result = (ListView) v.findViewById(R.id.lv_result_test);
-            result.setAdapter(new ArrayAdapter<String>(context, R.layout.simple_list_item_1, resultString));
+            exp = (ExpandableListView) v.findViewById(R.id.epl_result_test);
+            ll = (LinearLayout) v.findViewById(R.id.ll_bg_title);
+
+            iv = (ImageView) v.findViewById(R.id.iv_warning_result);
+//            result = (ListView) v.findViewById(R.id.lv_result_test);
+//            result.setAdapter(new ArrayAdapter<String>(context, R.layout.simple_list_item_1, resultString));
             tv = (TextView) v.findViewById(R.id.testing_test);
             pb = (ProgressBar) v.findViewById(R.id.pb_test);
         }
@@ -87,32 +97,23 @@ public class PagerAdapterForTestGuide extends PagerAdapter {
         return view == object;
     }
 
-    public void CleanListView() {
-        resultString = new ArrayList<>();
-        result.setAdapter(new ArrayAdapter<String>(context, R.layout.simple_list_item_1, resultString));
+    ResultExpAdapter adapter;
+
+    public void onRefesh(ArrayList<PartData> datas) {
+        adapter = new ResultExpAdapter(context, datas);
+        exp.setAdapter(adapter);
+        if (!HasDangerous()) {
+            setText(tv, Color.WHITE, Color.GREEN, "没有发现爆炸物");
+            iv.setVisibility(View.GONE);
+        } else {
+            setText(tv, Color.WHITE, Color.RED, "发现爆炸物");
+            iv.setVisibility(View.VISIBLE);
+        }
     }
 
-    public void onRefesh(ArrayList<ArrayList<ResultData>> datas) {
-        Log.i("datas", datas.toString());
-        resultString = new ArrayList<>();
-        for (int i = 0; i < datas.size(); i++) {
-            for (int j = 0; j < datas.get(i).size(); j++) {
-                if (datas.get(i).get(j).isHasfound()) {
-                    String res = "区域" + (i + 1) + datas.get(i).get(j).toString();
-                    if (resultString.size() == 0 | !resultString.contains(res)) {
-                        resultString.add(res);
-                    }
-                }
-            }
-        }
-        if (resultString != null) {
-            if (resultString.size() == 0) {
-                resultString.add("没有检测到危险物品");
-            }
 
-        }
-        Log.i("resultString", resultString.toString());
-        result.setAdapter(new ArrayAdapter<String>(context, R.layout.simple_list_item_1, resultString));
+    public boolean HasDangerous() {
+        return adapter.getDataSize() != 0;
     }
 
     public ArrayList<String> add(ArrayList<String> datas) {
@@ -134,21 +135,34 @@ public class PagerAdapterForTestGuide extends PagerAdapter {
             pb.setProgress(progress);
         } else {
             if (progress == -4) {
-                tv.setText("请录入白板信息");
+                setText(tv, Color.YELLOW, "请录入白板信息");
             } else if (progress == -3) {
-                tv.setText("设备未打开");
+                setText(tv, Color.YELLOW, "设备未打开");
             } else if (progress == -2) {
-                tv.setText("请正确放置被测物品");//测试不可用 请检查连接并正确放置被测物品//请正确放置被测物品
+                //测试不可用 请检查连接并正确放置被测物品//请正确放置被测物品
+                setText(tv, Color.YELLOW, "请正确放置被测物品");
             } else if (progress == -1) {
-                tv.setText("点击测试,开始检测");
+                setText(tv, Color.WHITE, "点击测试,开始检测");
                 pb.setProgress(0);
             } else if (progress == pb_max) {
-                tv.setText("检测完成");
+                setText(tv, Color.WHITE, "检测完成");
                 pb.setProgress(progress);
             } else {
-                tv.setText("正在检测...");
+                setText(tv, Color.WHITE, 0x00000000, "正在检测...");
+                iv.setVisibility(View.GONE);
                 pb.setProgress(progress);
             }
         }
+    }
+
+    void setText(TextView tv, int color, String content) {
+        tv.setText(content);
+        tv.setTextColor(color);
+    }
+
+    void setText(TextView tv, int color, int bg_color, String content) {
+        tv.setText(content);
+        ll.setBackgroundColor(bg_color);
+        tv.setTextColor(color);
     }
 }

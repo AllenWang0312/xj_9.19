@@ -172,7 +172,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                if (position == 0) {
+                if (position == 1) {
                     menu.findItem(R.id.action_chose).setVisible(true);
                     menu.findItem(R.id.action_chose).setIcon(app.showCheckBoxs ? R.drawable.ic_done_all_white_24dp : R.drawable.ic_done_white_24dp);
 //                    mDataHistory.refreshData();
@@ -185,6 +185,7 @@ public class MainActivity extends AppCompatActivity {
             public void onPageScrollStateChanged(int state) {
             }
         });
+//        vp.setCurrentItem(1);
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         regeisterReceiver();
@@ -212,10 +213,13 @@ public class MainActivity extends AppCompatActivity {
     void initView() {
         tl = (TabLayout) findViewById(R.id.tl_main);
         adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        mDataHistory=DataHistory.getInstance();
-        adapter.addFragment(mDataHistory, "记录");
         mTestFragment=TestFragment.getInstance();
         adapter.addFragment(mTestFragment, "测试");
+
+        mDataHistory=DataHistory.getInstance();
+        adapter.addFragment(mDataHistory, "记录");
+
+
         if (mSharedPreference.getBoolean(Consts.ROOT_PROMISSION, false)) {
             adapter.addFragment(SettingFragment.getInstance(), "设置");
             vp.setPagingEnabled(true);

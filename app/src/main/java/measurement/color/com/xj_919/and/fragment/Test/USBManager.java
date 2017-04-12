@@ -620,6 +620,7 @@ public class USBManager {
 //            if (judgeExistBlackPoint()) {
 //                return 0;
 //            }
+
             if (test_mod == 1) {
                 bitmap = drawLines(bitmap, getPoints(centerX, centerY, between), r);
             } else if (test_mod == 2) {
@@ -645,6 +646,7 @@ public class USBManager {
 
         private void initPartData() {
             PositionSets positionSets = Config.getInstance().getPositionSets();
+            Log.i("posistionSets", positionSets.toString());
 //            datas = getPartData(getPoints(positionSets.getCent_x(), positionSets.getCent_y(), positionSets.getCent_bew()), positionSets.getR());
             datas = getPartData(positionSets.getCent_x(), positionSets.getCent_y(), positionSets.getCent_bew(), positionSets.getR());
         }
@@ -700,26 +702,36 @@ public class USBManager {
 
         private ArrayList<int[]> getPartData(short centerX, short centerY, short between, short r) {
             ArrayList<int[]> datalist = new ArrayList<>();
-            int[] arr1 = new int[(2*between + 2 * r + 3) * (2 * r + 1)];
-            //存放的数组   从该数组的第几位存储  一行多少个像素 左上角X Y坐标   长 高
-            bitmap.getPixels(arr1, 0, (2*between + 2 * r + 3), (centerX - between - r), (centerY - between - r), (2*between + 2 * r + 3), (2 * r + 1));
-            datalist.add(arr1);
+//            int[] arr1 = new int[(2 * between + 2 * r + 3) * (2 * r + 1)];
+//            //存放的数组   从该数组的第几位存储  一行多少个像素 左上角X Y坐标   长 高
+//            bitmap.getPixels(arr1, 0, (2 * between + 2 * r + 3), (centerX - between - r), (centerY - between - r), (2 * between + 2 * r + 3), (2 * r + 1));
+//            datalist.add(arr1);
 
-            int[] arr2;
-//        int[] arr2 = new int[(2 * r + 1) * (2 * r + 1)];
-//        bitmap.getPixels(arr2, 0, (2 * r + 1), (centerX + between - r), (centerY - between - r), (2 * r + 1), (2 * r + 1));
-//        datalist.add(arr2);
-
+//1
+            int[] arr2 = new int[(2 * r + 1) * (2 * r + 1)];
+            bitmap.getPixels(arr2, 0, (2 * r + 1), (centerX - (between / 2) - r), (centerY - between - r), (2 * r + 1), (2 * r + 1));
+            datalist.add(arr2);
+//2
+            arr2 = new int[(2 * r + 1) * (2 * r + 1)];
+            bitmap.getPixels(arr2, 0, (2 * r + 1), (centerX + between - r), (centerY - between - r), (2 * r + 1), (2 * r + 1));
+            datalist.add(arr2);
+//3
             arr2 = new int[(2 * r + 1) * (2 * r + 1)];
             bitmap.getPixels(arr2, 0, (2 * r + 1), (centerX - between - r), (centerY - r), (2 * r + 1), (2 * r + 1));
             datalist.add(arr2);
+            //4
+//            arr2 = new int[(2 * r + 1) * (2 * r + 1)];
+//            bitmap.getPixels(arr2, 0, (2 * r + 1), (centerX + between - r), (centerY - r), (2 * r + 1), (2 * r + 1));
+//            datalist.add(arr2);
+//4
             arr2 = new int[(2 * r + 1) * (2 * r + 1)];
             bitmap.getPixels(arr2, 0, (2 * r + 1), (centerX + between - r), (centerY - r), (2 * r + 1), (2 * r + 1));
             datalist.add(arr2);
-
+//5
             arr2 = new int[(2 * r + 1) * (2 * r + 1)];
             bitmap.getPixels(arr2, 0, (2 * r + 1), (centerX - between - r), (centerY + between - r), (2 * r + 1), (2 * r + 1));
             datalist.add(arr2);
+            //6
             arr2 = new int[(2 * r + 1) * (2 * r + 1)];
             bitmap.getPixels(arr2, 0, (2 * r + 1), (centerX + between - r), (centerY + between - r), (2 * r + 1), (2 * r + 1));
             datalist.add(arr2);
@@ -733,25 +745,25 @@ public class USBManager {
          *
          * @return
          */
-        public ArrayList<ArrayList<ResultData>> checkData() {
-            ArrayList<ArrayList<ResultData>> result_data = new ArrayList<>();
-            ArrayList<ArrayList<ResultData>> results = Config.getInstance().getSettings();
-            Log.i("result", results.toString());
+        public ArrayList<PartData> checkData() {
+            ArrayList<PartData> result_data = new ArrayList<>();
+            ArrayList<ArrayList<JudgeCondition>> settings = Config.getInstance().getSettings();
+//            ArrayList<ArrayList<JudgeCondition>> results = new ArrayList<>();
+//            for (int i = 0; i < settings.size(); i++) {
+//                ArrayList<JudgeCondition> result = new ArrayList<>();
+//                for (int j = 0; j < settings.get(i).size(); j++) {
+//                    result.add(settings.get(i).get(j));
+//                }
+//                results.add(result);
+//            }
+            Log.i("settings", settings.toString());
             initPartData();
             for (int i = 0; i < datas.size(); i++) {
-                result_data.add(foundSimilarColor(datas.get(i), results.get(i), i));
+                result_data.add(foundSimilarColor(datas.get(i),
+                        settings.get(i),
+                        settings.get(i).get(0).getIndex()
+                ));
             }
-            if (result_data.get(2).get(0).hasfound) {
-                result_data.get(2).get(0).setNames("铵盐");
-                result_data.get(2).get(0).setIndex((short) 0);
-                if (result_data.get(1).get(0).hasfound) {
-                    result_data.get(2).get(0).setHasfound(false);
-                    result_data.get(1).get(0).setNames("硝酸铵");
-                    result_data.get(1).get(0).setIndex((short) 6);
-                }
-
-            }
-            Log.i("result_data", result_data.toString());
             return result_data;
         }
 
@@ -761,155 +773,34 @@ public class USBManager {
          * @return
          */
 
-        private ArrayList<ResultData> foundSimilarColor(int[] arr, ArrayList<ResultData> kinds, int area) {
-
-            ArrayList<ResultData> found = kinds;
-
-            int[] fondlist = new int[found.size()];
-            boolean[] boo = new boolean[found.size()];
-
-            for (int j = 0; j < found.size(); j++) {
+        private PartData foundSimilarColor(int[] arr, ArrayList<JudgeCondition> kinds, int group_index) {
+            for (int j = 0; j < kinds.size(); j++) {
+                JudgeCondition jud = kinds.get(j);
                 for (int i = 0; i < arr.length; i++) {
                     int pix = arr[i];
-                    if (fondlist[j] > found.get(j).getNum()) {
-                        boo[j] = true;
-                        found.get(j).setHasfound(true);
-                        Log.i("foundlist" + found.get(j).getIndex(), fondlist[j] + "");
-                        break;
-                    } else {
-                        if (judgeSimple(found.get(j), pix)) {
-                            fondlist[j]++;
-                        }
+                    if (judgeSimple(jud, pix)) {
+                        jud.incress();
                     }
                 }
             }
-            if (area == 0) {
-                if (boo[0]) {
-                    if (boo[1]) {
-                        found.get(0).setHasfound(true);
-                        found.get(1).setHasfound(false);
-                        found.get(2).setHasfound(false);
-                        found.get(3).setHasfound(false);
-                        found.get(4).setHasfound(false);
-                    } else {
-                        found.get(0).setHasfound(false);
-                        found.get(1).setHasfound(true);
-                        found.get(2).setHasfound(false);
-                        found.get(3).setHasfound(false);
-                        found.get(4).setHasfound(false);
-                    }
-                } else {
-                    if(boo[2]){
-                        found.get(0).setHasfound(true);
-                        found.get(1).setHasfound(false);
-                        found.get(2).setHasfound(false);
-                        found.get(3).setHasfound(false);
-                        found.get(4).setHasfound(false);
-                    }else {
-                        if (boo[4]) {
-                            found.get(1).setHasfound(false);
-                            found.get(0).setHasfound(false);
-                            found.get(2).setHasfound(false);
-                            found.get(3).setHasfound(false);
-                            found.get(4).setHasfound(true);
-                        } else {
-                            found.get(0).setHasfound(false);
-                            found.get(1).setHasfound(false);
-                            found.get(2).setHasfound(false);
-                            found.get(3).setHasfound(false);
-                            found.get(4).setHasfound(false);
-                        }
-                    }
-//                    if (boo[2]) {
-//                        if (boo[3]) {
-//                            found.get(0).setHasfound(false);
-//                            found.get(1).setHasfound(false);
-//                            found.get(2).setHasfound(false);
-////                            found.get(3).setHasfound(true);
-////                            found.get(4).setHasfound(false);
-//                        } else {
-//                            found.get(1).setHasfound(false);
-//                            found.get(0).setHasfound(false);
-////                            found.get(3).setHasfound(false);
-//                            found.get(2).setHasfound(true);
-////                            found.get(4).setHasfound(false);
-//
-//                        }
-//                    }
-//                    else {
-//                        if (boo[4]) {
-//                            found.get(1).setHasfound(false);
-//                            found.get(0).setHasfound(false);
-////                            found.get(3).setHasfound(false);
-//                            found.get(2).setHasfound(false);
-////                            found.get(4).setHasfound(true);
-////                        } else {
-//                            found.get(0).setHasfound(false);
-//                            found.get(1).setHasfound(false);
-//                            found.get(2).setHasfound(false);
-////                            found.get(3).setHasfound(false);
-////                            found.get(4).setHasfound(false);
-//                        }
-//
-//                    }
-
-                }
-            }
-//            //对2号区域特殊判断
-//            if (area == 1) {
-//                if (boo[0]) {
-//                    if (boo[1]) {
-//                        found.get(1).setHasfound(false);
-//                        found.get(0).setHasfound(true);
-//                        found.get(3).setHasfound(false);
-//                        found.get(2).setHasfound(false);
-//                    } else {
-//                        found.get(1).setHasfound(true);
-//                        found.get(0).setHasfound(false);
-//                        found.get(3).setHasfound(false);
-//                        found.get(2).setHasfound(false);
-//                    }
-//                } else {
-//                    if (boo[2]) {
-//                        if (boo[3]) {
-//                            found.get(1).setHasfound(false);
-//                            found.get(0).setHasfound(false);
-//                            found.get(3).setHasfound(true);
-//                            found.get(2).setHasfound(false);
-//                        } else {
-//                            found.get(1).setHasfound(false);
-//                            found.get(0).setHasfound(false);
-//                            found.get(3).setHasfound(false);
-//                            found.get(2).setHasfound(true);
-//                        }
-//                    } else {
-//                        found.get(0).setHasfound(false);
-//                        found.get(1).setHasfound(false);
-//                        found.get(2).setHasfound(false);
-//                        found.get(3).setHasfound(false);
-//                    }
-//
-//                }
-//            }
-//            Log.i("foundlist", Arrays.asList(fondlist)+"");
-            return found;
+            return new PartData(group_index, kinds);
         }
 
-        boolean judgeSimple(ResultData kinds, int pix) {
+        boolean judgeSimple(JudgeCondition kinds, int pix) {
 
-            if (colorIsInRange(kinds.getR(), kinds.getG(), kinds.getB(), kinds.getR_range(), kinds.getG_range(), kinds.getB_range(), pix) && colorHasSpeciality(pix, kinds.getDifferences())) {
+            if (colorIsInRange(kinds.getA_r(), kinds.getA_g(), kinds.getA_b(), kinds.getI_r(), kinds.getI_g(), kinds.getI_b(), pix) && colorHasSpeciality(pix, kinds.getDifferences())) {
                 return true;
             }
             return false;
         }
 
-        boolean colorIsInRange(@Nullable Short R, @Nullable Short G, @Nullable Short B,
-                               @Nullable Short r_range, @Nullable Short g_range, @Nullable Short b_range,
+        boolean colorIsInRange(@Nullable Short a_r, @Nullable Short a_g, @Nullable Short a_b,
+                               @Nullable Short i_r, @Nullable Short i_g, @Nullable Short i_b,
                                int color) {
             int r = (color & 0x00ff0000) >> 16;
             int g = (color & 0x0000ff00) >> 8;
             int b = (color & 0x000000ff);
-            if (r < R + r_range && r > R - r_range && g < G + g_range && g > G - g_range && b < B + b_range && b > B - b_range) {
+            if (r < a_r && r > i_r && g < a_g && g > i_g && b < a_b && b > i_b) {
                 return true;
             }
             return false;
@@ -976,7 +867,7 @@ public class USBManager {
             return points;
         }
 
-        public boolean saveData(int test_mod, @Nullable String tips, @Nullable Boolean saveImg, @Nullable ArrayList<ArrayList<ResultData>> mDates) {
+        public boolean saveData(int test_mod, @Nullable String tips, @Nullable Boolean saveImg, @Nullable ArrayList<PartData> mDates) {
             if (test_mod == -1) {
 //                FileUtils.deleteFile(FileAndPath.SD_xj, FileAndPath.IMG_BAIBAN_NAME + ".cache");
 //                FileAndPath.writeByteArrayToFile(part1, FileAndPath.SD_xj, FileAndPath.IMG_BAIBAN_NAME + ".cache");
@@ -991,41 +882,40 @@ public class USBManager {
 
                     values.put("data", d_t[0]);
                     values.put("time", d_t[1]);
-
-                    if (mDates != null) {
-//                        Log.i("save_data", mDates.toString());
-                        int num = 0;
-                        for (int i = 0; i < mDates.size(); i++) {
-                            ArrayList<ResultData> part = mDates.get(i);
-//                            Log.i("part", part.toString());
-                            boolean[] found_list = new boolean[part.size()];
-                            for (int j = 0; j < part.size(); j++) {
-//                                Log.i("has_found", i + "" + j + String.valueOf(part.get(j).isHasfound()));
-                                if (part.get(j).isHasfound()) {
-                                    found_list[j] = true;
-                                    num++;
-                                }
-                            }
-                            if (MathUtil.hasTrueValue(found_list)) {
-                                values.put("result" + (i + 1), "阳性");
-                                StringBuffer str_found = new StringBuffer();
-                                for (int k = 0; k < found_list.length; k++) {
-                                    if (found_list[k]) {
-                                        str_found.append(Config.names[(int) (part.get(k).getIndex())]);
-                                    }
-                                }
-                                values.put("detial" + (i + 1), str_found.toString());
-                            } else {
-                                values.put("result" + (i + 1), "阴性");
-                                values.put("detial" + (i + 1), "");
-                            }
-                        }
-                        if (num > 0) {
-                            values.put("result", "阳性");
-                        } else {
-                            values.put("result", "阴性");
+                    boolean isFound = false;
+                    if (mDates != null && mDates.size() > 0) {
+                        isFound = true;
+                        for (PartData p : mDates) {
+                            ArrayList<JudgeCondition> juds = p.getResults();
+                            values.put("result" + (juds.get(0).getIndex() + 1), "阳性");
+                            values.put("detial" + (juds.get(0).getIndex() + 1), juds.get(0).getName());
                         }
                     }
+                    values.put("result", "阳性");
+
+
+//                    if (mDates != null) {
+
+//                        int num = 0;
+//                        Log.i("save_data", mDates.toString());
+//                        for (int i = 0; i < mDates.size(); i++) {
+//                            PartData part = mDates.get(i);
+////                            Log.i("part", part.toString());
+//                            if (part != null) {
+//                                num += 1;
+//                                values.put("result" + (i + 1), "阳性");
+//                                values.put("detial" + (i + 1), part.getCategroy_name());
+//                            } else {
+//                                values.put("result" + (i + 1), "阴性");
+//                                values.put("detial" + (i + 1), "");
+//                            }
+//                        }
+//                        if (num > 0) {
+//                            values.put("result", "阳性");
+//                        } else {
+//                            values.put("result", "阴性");
+//                        }
+//                    }
 
                     values.put("tips", tips);
 

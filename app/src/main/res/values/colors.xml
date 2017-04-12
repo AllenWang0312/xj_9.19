@@ -28,15 +28,23 @@
     <color name="bar_text_selected_night">#a9a9a9</color>
 
 
-
-
-
     <color name="lightcolorPrimary">#B2EBF2</color>
     <color name="write">#FFFFFF</color>
     <color name="colorDivider">#BDBDBD</color>
     <color name="secondaryText">#757575</color>
     <color name="textPrimary">#212121</color>
-    <color name="black">#00000000</color>
+    <color name="black">#000000</color>
+    <color name="translate">#00000000</color>
+
+    <color name="part_1_bg">#e81d62</color>
+    <color name="part_2_bg">#a1362b</color>
+    <color name="part_3_bg">#002060</color>
+    <color name="part_4_bg">#00796b</color>
+    <color name="part_5_bg">#2196f3</color>
+    <color name="part_6_bg">#673ab7</color>
+
+    <color name="group_bg">#303F9F</color>
+
 
     <color name="primary_text_default_material_light">#deffffff</color>
 </resources>

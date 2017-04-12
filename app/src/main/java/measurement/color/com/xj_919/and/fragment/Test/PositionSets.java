@@ -14,8 +14,18 @@ class PositionSets {
         this.r = r;
     }
 
-    public static PositionSets getPositionSetsWitdShortArray(Short [] datas) {
-        return new PositionSets(datas[0],datas[1],datas[2],datas[3]);
+    @Override
+    public String toString() {
+        return
+                 "cent_x" + String.valueOf(cent_x)
+                + "cent_y" + String.valueOf(cent_y)
+                + "cent_bew" + String.valueOf(cent_bew)
+                + "r" + String.valueOf(r)
+                ;
+    }
+
+    public static PositionSets getPositionSetsWitdShortArray(Short[] datas) {
+        return new PositionSets(datas[0], datas[1], datas[2], datas[3]);
     }
 
     public short getCent_x() {

@@ -66,6 +66,7 @@
                 <!--android:gravity="center_horizontal"-->
                 <!--android:text="B1"/>-->
                 <TextView
+                    android:textSize="@dimen/history_data_title_size"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -75,6 +76,7 @@
                     />
 
                 <TextView
+                    android:textSize="@dimen/history_data_title_size"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -84,6 +86,7 @@
                     />
 
                 <TextView
+                    android:textSize="@dimen/history_data_title_size"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -92,6 +95,7 @@
                     android:textColor="?attr/textColor"/>
 
                 <TextView
+                    android:textSize="@dimen/history_data_title_size"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"

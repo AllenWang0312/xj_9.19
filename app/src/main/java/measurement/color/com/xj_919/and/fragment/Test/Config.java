@@ -4,15 +4,18 @@ import java.util.ArrayList;
 
 import measurement.color.com.xj_919.and.Utils.soft.clsPublic;
 
+import static measurement.color.com.xj_919.and.fragment.Test.Consts.judge_name;
+import static measurement.color.com.xj_919.and.fragment.Test.Consts.reagent_names;
+
 /**
  * Created by wpc on 2016/12/3.
  */
 
 public class Config {
 
-    PositionSets mPositionSets;
-    boolean has_init = false;
-    static Config instance;
+    public static PositionSets mPositionSets;
+    public static boolean has_init = false;
+    public static Config instance;
 
     public static Config getInstance() {
         if (instance == null) {
@@ -20,29 +23,6 @@ public class Config {
         }
         return instance;
     }
-//    区域1阳性结果: 硝酸甘油酯类（液体炸药）、硝胺类(黑索金、奥克托金)、亚硝酸盐类
-//
-//    区域3与区域4同时显阳性报硝酸铵，区域3单独显色报硝酸盐，区域4单独显色报铵盐
-//
-//    区域5单独显色报：过氧化物类（TATP、HMTD、过硫酸盐）
-//
-//    区域6单独显色报：氯酸盐
-
-
-    public static String names[] = {
-            "铵盐",
-            "TNT (三硝基甲苯)",//1  黑红 浅红
-            "DNT (二硝基甲苯)",//2  黑绿
-            "硫磺",//3
-            "RDX(黑索金)",//4 浅红   硝酸甘油酯类（液体炸药）、硝胺类(黑索金、奥克托金)、亚硝酸盐类
-            "尿素", //5
-            "硝酸盐", //6
-            "氯酸盐", //7
-            "过氧化物类", //8  （TATP、HMTD、过硫酸盐）
-            "PA(苦味酸)", //9
-            "pNT(对硝基甲苯)", //10
-            "HMX(奥克托金)"//11
-    };
 
     private Config() {
 
@@ -51,7 +31,7 @@ public class Config {
     String model_number; //2byte
     String version;// 1 byte
 
-    ArrayList<ArrayList<ResultData>> settings;
+    public static ArrayList<ArrayList<JudgeCondition>> settings;
 
 //    55 00 07 5500
 // 9101
@@ -71,7 +51,7 @@ public class Config {
 // 07 00 3C 00  3C 00  5A 00  3C 003C 003C 00C8 00FD FF00 0000 0000 0000 000A   0000 0000 0000 0000 0000 0000
 
 
-    public void initSettings(byte[] data) {
+    public static void initSettings(byte[] data) {
         if (data[0] != 0x55) {
             return;
         }
@@ -81,81 +61,69 @@ public class Config {
         int index = 13;
         byte[] bytes = new byte[40];
         settings = new ArrayList<>();
-        ArrayList<ResultData> results = new ArrayList<>();
-//        results.add(new ResultData(4,      100, 75, 75,     10, 10, 10,     50, null));//0xff644b4b
-//        results.add(new ResultData(11,     100, 75, 75,     10, 10, 10,     50, null));
-
-        index += 40;
-        System.arraycopy(data, index, bytes, 0, 40);//1
-        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
-        index += 40;
-        System.arraycopy(data, index, bytes, 0, 40);//2
-        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
-        index += 40;
-        System.arraycopy(data, index, bytes, 0, 40);//3
-        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
-        index += 40;
-        System.arraycopy(data, index, bytes, 0, 40);//9
-        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
-
+        ArrayList<JudgeCondition> results = new ArrayList<>();
         index = 13;
         System.arraycopy(data, index, bytes, 0, 40);//4
-        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
-
-//        System.arraycopy(data,index,bytes,0,40);index+=40;
-//        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
+        results.add(getResultDataFromShortArray(reagent_names[4], clsPublic.toShortArray(bytes)));
         settings.add(results);
 
+        results = new ArrayList<>();
+        index += 40;
+        System.arraycopy(data, index, bytes, 0, 40);//黑
+        results.add(getResultDataFromShortArray(judge_name[0], clsPublic.toShortArray(bytes)));
+        index += 40;
+        System.arraycopy(data, index, bytes, 0, 40);//浅红
+        results.add(getResultDataFromShortArray(judge_name[1], clsPublic.toShortArray(bytes)));
+        index += 40;
+        System.arraycopy(data, index, bytes, 0, 40);//浅绿
+        results.add(getResultDataFromShortArray(judge_name[2], clsPublic.toShortArray(bytes)));
+        index += 40;
+        System.arraycopy(data, index, bytes, 0, 40);//pa
+        results.add(getResultDataFromShortArray(judge_name[3], clsPublic.toShortArray(bytes)));
+        index += 40;
+        System.arraycopy(data, index, bytes, 0, 40);//深红 硫磺
+        results.add(getResultDataFromShortArray(judge_name[4], clsPublic.toShortArray(bytes)));
+        index += 40;
+        System.arraycopy(data, index, bytes, 0, 40);//浅红 硫磺
+        results.add(getResultDataFromShortArray(judge_name[5], clsPublic.toShortArray(bytes)));
+        settings.add(results);
 
-        index = 53;
-//        results = new ArrayList<>();
-//        System.arraycopy(data, index, bytes, 0, 40);
-//        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
-        index += 40;
-//        System.arraycopy(data, index, bytes, 0, 40);
-//        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
-        index += 40;
-//        System.arraycopy(data, index, bytes, 0, 40);
-//        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
-        index += 40;
-//        System.arraycopy(data, index, bytes, 0, 40);
-//        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
-//        results.add(new ResultData(1,     130, 100, 100,     10, 10, 10,    500, null));//0xff823231
-//        results.add(new ResultData(2,     20, 30, 30,         10,10, 10,       500, null));//0xff141e1e
-//        results.add(new ResultData(3,      92, 66, 53,       10, 10, 10,      300, null));// 0xff5c4235
-//        results.add(new ResultData(9,     117, 74, 57,         10, 10, 10,    300, null));//0xff754a39
-//        settings.add(results);
 
         results = new ArrayList<>();
         index += 40;
         System.arraycopy(data, index, bytes, 0, 40);
-        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
+        results.add(getResultDataFromShortArray(reagent_names[6], clsPublic.toShortArray(bytes)));
 //        results.add(new ResultData(6,     30, 30, 40,         30, 30, 30,      300, null));//0xff1e1e28
         settings.add(results);
 
         results = new ArrayList<>();
         index += 40;
         System.arraycopy(data, index, bytes, 0, 40);
-        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
+        results.add(getResultDataFromShortArray(reagent_names[0], clsPublic.toShortArray(bytes)));
+//        results.add(new ResultData(6,      160, 110, 80,        30, 30, 30,  300, null));//0xffa06e50
+//        settings.add(results);
+//
+//        results = new ArrayList<>();
+        index += 40;
+        System.arraycopy(data, index, bytes, 0, 40);
+        results.add(getResultDataFromShortArray(reagent_names[12], clsPublic.toShortArray(bytes)));
 //        results.add(new ResultData(6,      160, 110, 80,        30, 30, 30,  300, null));//0xffa06e50
         settings.add(results);
 
         results = new ArrayList<>();
         index += 40;
         System.arraycopy(data, index, bytes, 0, 40);
-        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
+        results.add(getResultDataFromShortArray(reagent_names[8], clsPublic.toShortArray(bytes)));
 //        results.add(new ResultData(8,     40, 40, 40,         30, 30, 30,        1000, null));// 0xff282828
         settings.add(results);
 
         results = new ArrayList<>();
         index += 40;
         System.arraycopy(data, index, bytes, 0, 40);
-        results.add(ResultData.getResultDataFromShortArray(clsPublic.toShortArray(bytes)));
+        results.add(getResultDataFromShortArray(reagent_names[7], clsPublic.toShortArray(bytes)));
 //        results.add(new ResultData(7,      60, 70, 90,       10, 10, 10,         500, null));//0xff3c465a
         settings.add(results);
         has_init = true;
-
-//        Log.i("positionsets",mPositionSets.toString
     }
 
     public boolean isHas_init() {
@@ -170,13 +138,6 @@ public class Config {
         Config.instance = instance;
     }
 
-    public static String[] getNames() {
-        return names;
-    }
-
-    public static void setNames(String[] names) {
-        Config.names = names;
-    }
 
     public String getModel_number() {
         return model_number;
@@ -195,15 +156,8 @@ public class Config {
     }
 
 
-    public ArrayList<ArrayList<ResultData>> getSettings() {
-        if (settings == null) {
+    public static ArrayList<ArrayList<JudgeCondition>> getSettings() {
             initSettings(USBManager.getInstance().TransceiverInstance.sendTakeConfigRequest());
-        }
-        for (int i = 0; i < settings.size(); i++) {
-            for (int j = 0; j < settings.get(i).size(); j++) {
-                settings.get(i).get(j).setHasfound(false);
-            }
-        }
         return settings;
     }
 
@@ -220,7 +174,14 @@ public class Config {
         mPositionSets = positionSets;
     }
 
-    public void setSettings(ArrayList<ArrayList<ResultData>> settings) {
-        this.settings = settings;
+
+    public static JudgeCondition getResultDataFromShortArray(String name, Short[] shorts) {
+        Short[] diff = new Short[6];
+        System.arraycopy(shorts, 8, diff, 0, 6);
+//        if (shorts[0] == 3) {
+//            return new JudgeCondition(shorts[0], (short) (shorts[1] - 5), shorts[2], (short) (shorts[3] + 3), (short) (shorts[4] + 5), (short) (shorts[5] + 3), (short) (shorts[6] + 5), shorts[7], diff);
+//        } else {
+        return new JudgeCondition(name, shorts[0], shorts[1], shorts[2], shorts[3], shorts[4], shorts[5], shorts[6], shorts[7], diff);
+//        }
     }
 }

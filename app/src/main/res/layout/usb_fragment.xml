@@ -25,8 +25,7 @@
             <android.support.v7.widget.CardView
                 style="@style/sameCornerRadiusCardview"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="wrap_content"
                 android:clickable="true"
                 android:foreground="?android:attr/selectableItemBackground"
                 >
@@ -38,19 +37,19 @@
                     android:orientation="vertical"
                     >
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="8dp"
-                        android:text="提示"
-                        android:textColor="?attr/secondTextColor"
-                        android:textSize="18sp"
-                        />
+                    <!--<TextView-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:layout_margin="8dp"-->
+                        <!--android:text="提示"-->
+                        <!--android:textColor="?attr/secondTextColor"-->
+                        <!--android:textSize="18sp"-->
+                        <!--/>-->
 
                     <measurement.color.com.xj_919.and.view.CustomViewPager
                         android:id="@+id/vp_test"
                         android:layout_width="match_parent"
-                        android:layout_height="350dp"
+                        android:layout_height="400dp"
                         >
                     </measurement.color.com.xj_919.and.view.CustomViewPager>
 
@@ -88,31 +87,32 @@
 
                         <Button
                             android:id="@+id/bt_print_usb"
-                            android:visibility="gone"
                             style="@style/Widget.AppCompat.Button.Borderless.Colored"
                             android:layout_width="60dp"
                             android:layout_height="40dp"
                             android:layout_toStartOf="@+id/bt_save_usb"
                             android:text="打印"
+                            android:visibility="gone"
                             />
 
                         <Button
                             android:id="@+id/bt_skep_test"
-                            style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:textSize="24sp"
                             android:text="跳过"
                             />
+                        <!--style="@style/Base.Widget.AppCompat.Button.Borderless.Colored"-->
                     </LinearLayout>
                 </LinearLayout>
             </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.CardView
                 android:id="@+id/cv1_test"
-                android:layout_marginTop="16dp"
                 style="@style/sameCornerRadiusCardview"
                 android:layout_width="match_parent"
                 android:layout_height="240dp"
+                android:layout_marginTop="16dp"
                 android:clickable="true"
                 android:foreground="?android:attr/selectableItemBackground"
                 android:visibility="gone"
@@ -209,10 +209,10 @@
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="中心点位置:"
-                                android:textColor="?attr/textColor"
                                 android:layout_above="@+id/bt_left_location"
-                                android:layout_alignParentStart="true"/>
+                                android:layout_alignParentStart="true"
+                                android:text="中心点位置:"
+                                android:textColor="?attr/textColor"/>
 
                         </RelativeLayout>
 
@@ -230,8 +230,8 @@
                                 <TextView
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
-                                    android:text="中心点间距"
                                     android:gravity="center_horizontal"
+                                    android:text="中心点间距"
                                     android:textColor="?attr/textColor"
                                     />
 
@@ -286,6 +286,7 @@
                                     android:layout_height="wrap_content"
                                     android:text="+"/>
                             </TableRow>
+
                             <TableRow
 
                                 >
@@ -300,7 +301,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:visibility="gone"
-                       >
+                        >
 
                     </ListView>
 
@@ -312,19 +313,19 @@
                         >
 
                         <CheckBox
-                            android:text="使用下位机位置"
+                            android:id="@+id/cb_use_under_position"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:id="@+id/cb_use_under_position"
-                            android:textColor="?attr/textColor"
-                            android:layout_weight="1"/>
+                            android:layout_weight="1"
+                            android:text="使用下位机位置"
+                            android:textColor="?attr/textColor"/>
 
                         <Button
-                            android:visibility="gone"
                             android:id="@+id/bblr_test"
-                            android:text="白板录入"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:text="白板录入"
+                            android:visibility="gone"
                             />
 
                         <Button
@@ -353,11 +354,11 @@
         >
 
         <Button
-            android:text="关灯"
+            android:id="@+id/bt_turn_down_light"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/bt_turn_down_light"
-            android:layout_weight="1"/>
+            android:layout_weight="1"
+            android:text="关灯"/>
 
         <EditText
             android:id="@+id/et_tips_usb"

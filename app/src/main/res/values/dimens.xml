@@ -20,4 +20,8 @@
     <dimen name="boundlessbutton_textsize">20sp</dimen>
 
     <dimen name="test_result_textsize">20dp</dimen>
+    <dimen name="history_data_title_size">20sp</dimen>
+    <dimen name="resut_string_size">36sp</dimen>
+    <dimen name="result_group_title_size">24sp</dimen>
+
 </resources>
